@@ -1,9 +1,13 @@
 import React from "react";
 import "./home_page.css";
+import Navbar from "../../navbar/navbar.js"
 
 const home_page = () => {
     return(
-        <div>HomePage placeholder</div>
+        <>
+            <Navbar/>
+            <div>HomePage placeholder</div>
+        </>
     );
 }
 
