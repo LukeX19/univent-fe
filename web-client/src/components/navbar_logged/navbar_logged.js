@@ -5,8 +5,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
 
-const pages = ['Explore Events', 'Host a New Event'];
+const pages = ['Explore Events', 'Host a New Event', 'My Events'];
 const settings = [
     {name: 'Profile', icon: <AccountCircleIcon/>},
     {name: 'Account', icon: <SettingsIcon/>},
@@ -14,6 +15,7 @@ const settings = [
 ];
 
 function ResponsiveAppBar() {
+    const navigate = useNavigate();
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -37,11 +39,12 @@ function ResponsiveAppBar() {
         <AppBar
             position="sticky"
             elevation={0}
-            sx={{backgroundColor: 'transparent', px:{xs: 4, sm: 10}, py:2, color: '#191919'}}>
+            sx={{backgroundColor: 'white', px:{xs: 4, sm: 10}, py: 1, height: '11vh', color: '#191919'}}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
-                        sx={{flexGrow: 1, display: { xs: 'none', md: 'flex' }, fontWeight: 700, fontSize: '25px'}}>
+                        sx={{flexGrow: 1, display: { xs: 'none', md: 'flex' }, fontWeight: 700, fontSize: '25px', cursor: 'pointer'}}
+                        onClick={()=>{navigate("/")}}>
                         Univent
                     </Typography>
 
@@ -122,8 +125,8 @@ function ResponsiveAppBar() {
                         open={Boolean(anchorElUser)}
                         onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                            {settings.map((setting, index) => (
+                                <MenuItem key={index} onClick={handleCloseUserMenu}>
                                     <ListItemIcon>{setting.icon}</ListItemIcon>
                                     
                                     <Typography textAlign="center" sx={{ px: 1 }}>{setting.name}</Typography>
