@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./components/pages/home_page/home_page.js"
 import Feed from "./components/pages/feed/feed.js"
 import EventPage from "./components/pages/event_page/event_page.js"
+import CreateEvent from "./components/pages/create_event/create_event.js"
+
 function App() {
   return (
     <>
@@ -10,6 +12,7 @@ function App() {
           <Route exact path="/" element={<HomePage/>}/>
           <Route exact path="/feed" element={<Feed/>}/>
           <Route exact path="/event-page" element={<EventPage/>}/>
+          <Route exact path="/create-event" element={<CreateEvent/>}/>
         </Routes>
       </BrowserRouter>
     </>
