@@ -1,0 +1,60 @@
+.container-signin{
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-signin .paper{
+    width: 500px;
+    padding: 30px 20px 30px 20px;
+}
+
+.container-signin .container{
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.container-signin .forgot-password-link{
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.container-signin .signup-section{
+    display: flex;
+}
+
+.container-signin .signup-link{
+    cursor: pointer;
+    text-decoration: underline;
+    padding-left: 5px;
+}
+
+.container-signin .button-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-signin .icon{
+    font-size: 1.4rem;
+    margin-right: 10px;
+}
+
+.container-signin .signin-button{
+    width: 200px;
+    height: 45px;
+    background-color: #21b2c3;
+}
+
+.container-signin .google-button{
+    width: 260px;
+    height: 45px;
+    background-color: orange;
+}
+
+.container-signin .facebook-button{
+    width: 260px;
+    height: 45px;
+    background-color: #AA8DD3;
+}
