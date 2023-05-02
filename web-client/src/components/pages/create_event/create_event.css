@@ -20,6 +20,11 @@
     pointer-events: none;
 }
 
+.container-create-event .placeholder{
+    color: white;
+    font-size: 20px;
+}
+
 .container-create-event .box{
     position: absolute;
     bottom: 0px;
@@ -58,7 +63,6 @@
     .container-create-event .grid-middle{
         display: none;
     }
-    
 }
 
 @media only screen and (min-width: 600px) and (max-width: 900px){
