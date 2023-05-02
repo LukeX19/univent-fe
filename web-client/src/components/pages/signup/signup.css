@@ -1,0 +1,109 @@
+.container-signup{
+    width: 100%;
+    height: 100vh;
+}
+
+.container-signup .first-item{
+    background: rgb(192, 183, 191);
+}
+
+.container-signup .second-item{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.container-signup .form{
+    width: 550px;
+    padding: 50px;
+}
+
+.container-signup .title{
+    border-left: 2px solid black;
+    padding-left: 15px;
+}
+
+.container-signup .signin-section{
+    display: flex;
+    color: #205E61;
+    font-size: 14px;
+}
+
+.container-signup .signin-link{
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+    padding-left: 5px;
+}
+
+.container-signup .button{
+    background: #21b2c3;
+    padding: 8px 25px 8px 25px;
+}
+
+.container-signup .next{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.container-signup .prev{
+    display: flex;
+    justify-content: flex-start;
+}
+
+.container-signup .next-button{
+    background: #21b2c3;
+    padding: 8px 25px 8px 25px;
+}
+
+.container-signup .prev-button{
+    background: #AA8DD3;
+    padding: 8px 25px 8px 25px;
+}
+
+.container-signup .password-requirements{
+    width: 100%;
+    height: max-content;
+}
+
+.password-requirements ul{
+    margin-left: 60px;
+}
+
+.password-requirements p{
+    font-size: 17px;
+}
+
+.password-requirements li{
+    font-size: 17px;
+}
+
+.container-signup .grid-avatar{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.container-signup .delete-icon{
+    background-color: red;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.6rem;
+}
+
+.container-signup .add-icon{
+    background-color: orange;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.6rem;
+}
+
+.container-signup .avatar{
+    width: 200px;
+    height: 200px;
+    background-color: #D6E4E5;
+}
