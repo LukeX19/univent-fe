@@ -1,0 +1,44 @@
+.container-edit-profile{
+    justify-content: center;
+    align-items: center;
+}
+
+.container-edit-profile .paper{
+    padding: 30px 20px 30px 20px;
+    width: 900px;
+}
+
+.container-edit-profile .title{
+    border-left: 2px solid black;
+    padding-left: 10px;
+}
+
+.container-edit-profile .grid-avatar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-edit-profile .delete-icon{
+    background-color: red;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.6rem;
+}
+
+.container-edit-profile  .add-icon{
+    background-color: orange;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.6rem;
+}
+
+.container-edit-profile .avatar{
+    width: 250px;
+    height: 250px;
+    background-color: #D6E4E5;
+}
