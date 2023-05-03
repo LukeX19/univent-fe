@@ -5,6 +5,7 @@ import EventPage from "./components/pages/event_page/event_page.js"
 import CreateEvent from "./components/pages/create_event/create_event.js"
 import EditProfile from "./components/pages/edit_profile/edit_profile.js";
 import ChangePassword from "./components/pages/change_password/change_password.js";
+import FeedbackForm from "./components/pages/feedback_form/feedback_form.js";
 import Signin from "./components/pages/signin/signin.js";
 import Signup from "./components/pages/signup/signup.js";
 
@@ -19,6 +20,7 @@ function App() {
           <Route exact path="/create-event" element={<CreateEvent/>}/>
           <Route exact path="/edit-profile" element={<EditProfile/>}/>
           <Route exact path="/change-password" element={<ChangePassword/>}/>
+          <Route exact path="/feedback-form" element={<FeedbackForm/>}/>
           <Route exact path="/signin" element={<Signin/>}/>
           <Route exact path="/signup" element={<Signup/>}/>
         </Routes>
