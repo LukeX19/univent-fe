@@ -1,0 +1,30 @@
+.container-feedback-form{
+    justify-content: center;
+    align-items: center;
+}
+
+.container-feedback-form .paper{
+    padding: 30px 30px 30px 30px;
+    width: 550px;
+}
+
+.container-feedback-form .grid{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.container-feedback-form .img{
+    width: 65px;
+    height: 65px;
+}
+
+.container-feedback-form .icon{
+    font-size: 1.3rem;
+}
+
+.container-feedback-form .container{
+    height: 400px;
+    overflow-y: auto;
+}
