@@ -7,10 +7,15 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api"
 import cooking from "../../images/cooking.png";
 import girl from "../../images/girl.jpg"
 import maps from "../../images/maps.jpg"
 import "../event_page/event_page.css"
+
+const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
+localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
+const storedMapCenter = JSON.parse(localStorage.getItem('mapCenter'));
 
 const EventPage = () => {
 
@@ -69,6 +74,16 @@ const EventPage = () => {
         }, 
     ];
 
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API
+    })
+
+    if(!isLoaded){
+        return(
+            <></>
+        )
+    }
+
     return(
         <>
             <NavbarLoggedIn/>
@@ -125,7 +140,9 @@ const EventPage = () => {
                         <Typography pb={2} variant="h6">Location on the map</Typography>
                         <Divider />
                         <Box py={2}>
-                            <img src={maps}/>
+                            <GoogleMap center={storedMapCenter} zoom={15} mapContainerStyle={{width: "100%", height: "600px"}}>
+                                <Marker position={storedMapCenter}/>
+                            </GoogleMap>
                         </Box>
                     </Grid>
 
