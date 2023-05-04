@@ -7,7 +7,8 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api"
+import NearMeIcon from '@mui/icons-material/NearMe';
+import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api"
 import cooking from "../../images/cooking.png";
 import girl from "../../images/girl.jpg"
 import maps from "../../images/maps.jpg"
@@ -78,6 +79,8 @@ const EventPage = () => {
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API
     })
 
+    const[map, setMap] = useState(/** @type google.maps.Map */ (null));
+
     if(!isLoaded){
         return(
             <></>
@@ -140,8 +143,19 @@ const EventPage = () => {
                         <Typography pb={2} variant="h6">Location on the map</Typography>
                         <Divider />
                         <Box py={2}>
-                            <GoogleMap center={storedMapCenter} zoom={15} mapContainerStyle={{width: "100%", height: "600px"}}>
-                                <Marker position={storedMapCenter}/>
+                            <GoogleMap
+                            center={storedMapCenter}
+                            zoom={15}
+                            mapContainerStyle={{width: "100%", height: "600px"}}
+                            onLoad={(map) => setMap(map)}
+                            >
+                                <Grid item height="100px" position="relative">
+                                    <Box position="absolute" bottom="0px" left="0px">
+                                        <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(storedMapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
+                                    </Box>
+                                </Grid>
+
+                                <MarkerF position={storedMapCenter}/>
                             </GoogleMap>
                         </Box>
                     </Grid>
