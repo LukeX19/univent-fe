@@ -1,5 +1,8 @@
-import { React, useState } from 'react';
-import { Box, Button, Grid, Paper, Typography, Autocomplete, TextField } from '@mui/material';
+import { React, useState, useEffect } from 'react';
+import { Box, Button, Grid, Paper, Typography, Autocomplete, TextField, InputBase } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import SearchIcon from '@mui/icons-material/Search';
+import NearMeIcon from '@mui/icons-material/NearMe';
 import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Timeline,  TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot, timelineItemClasses } from '@mui/lab';
@@ -8,11 +11,44 @@ import dayjs from 'dayjs';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api"
+import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api"
 import cooking from "../../images/cooking.png";
 import maps from "../../images/maps.jpg"
 import "../create_event/create_event.css";
 
 const initialState = {eventName: "", eventType: "", startDate: "", startTime: "", endDate: "", endTime: "", nrParticipants: "", description: "", mapsAPI: ""};
+
+const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
+localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
+const storedMapCenter = JSON.parse(localStorage.getItem('mapCenter'));
+
+const Search = styled('div')(({ theme }) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    border: '1px solid #BDBDBD',
+    width: '100%',
+    background: 'white'
+}));
+  
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#BDBDBD'
+}));
+  
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+      padding: theme.spacing(1, 1, 1, 0),
+      paddingLeft: `calc(1em + ${theme.spacing(5)})`,
+    },
+}));
 
 const CreateEvent = () => {
 
@@ -67,6 +103,22 @@ const CreateEvent = () => {
     }
 
     const tomorrow = dayjs().add(1, 'day');
+
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API,
+        libraries: ['places']
+    });
+
+    const[map, setMap] = useState(/** @type google.maps.Map */ (null));
+
+    const [marker, setMarker] = useState(null);
+    const [autocomplete, setAutocomplete] = useState(null);
+
+    if(!isLoaded){
+        return(
+            <></>
+        )
+    }
 
     return(
         <>
@@ -219,9 +271,44 @@ const CreateEvent = () => {
                                 <TimelineConnector/>
                             </TimelineSeparator>
                             <TimelineContent>
-                                <Typography>MAPS API</Typography>
+                                <Typography>CHOOSE LOCATION</Typography>
                                 <Grid container py={5}>
-                                    <img src={maps}/>
+                                    <Box display="flex" justifyContent="center" width="100%" pb={4}>
+                                        <GoogleAutocomplete onLoad={(autocomplete) => setAutocomplete(autocomplete)}>
+                                            <Search>
+                                                <SearchIconWrapper>
+                                                    <SearchIcon />
+                                                </SearchIconWrapper>
+
+                                                <StyledInputBase placeholder="Search…" inputProps={{"aria-label": "search"}}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Enter") {
+                                                        e.preventDefault();
+                                                        if (marker && autocomplete && autocomplete.getPlace()) {
+                                                        marker.setPosition(autocomplete.getPlace().geometry.location);
+                                                        map.panTo(autocomplete.getPlace().geometry.location);
+                                                        }
+                                                    }
+                                                    }}
+                                                />
+                                            </Search>
+                                        </GoogleAutocomplete>
+                                    </Box>
+
+                                    <GoogleMap
+                                        center={storedMapCenter}
+                                        zoom={15}
+                                        mapContainerStyle={{width: "100%", height: "600px"}}
+                                        onLoad={(map) => setMap(map)}
+                                    >
+                                        <Grid item height="100px" position="relative">
+                                            <Box position="absolute" bottom="0px" left="0px">
+                                                <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(storedMapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
+                                            </Box>
+                                        </Grid>
+                                        
+                                        <MarkerF position={storedMapCenter} onLoad={(marker) => setMarker(marker)}/>
+                                    </GoogleMap>
                                 </Grid>
                             </TimelineContent>
                         </TimelineItem>
