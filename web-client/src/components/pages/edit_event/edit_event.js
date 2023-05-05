@@ -284,7 +284,7 @@ const CreateEvent = () => {
                                         mapContainerStyle={{width: "100%", height: "600px"}}
                                         onLoad={(map) => setMap(map)}
                                     >
-                                        <Grid item height="100px" position="relative">
+                                        <Grid item height="50px" position="relative" sx={{mt: 10}}>
                                             <Box position="absolute" bottom="0px" left="0px">
                                                 <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(storedMapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
                                             </Box>
