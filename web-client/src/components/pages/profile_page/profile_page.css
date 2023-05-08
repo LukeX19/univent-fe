@@ -1,0 +1,63 @@
+.container-profile{
+  justify-content: center;
+  align-items: center;
+}
+
+.container-profile .container{
+  width: 900px;
+}
+
+.container-profile .info-grid-item{
+  background: linear-gradient(to top, #F1F6F9 60%, white 50%);
+  padding: 30px;
+}
+
+.container-profile .avatar-grid-item{
+  background: transparent;
+  display: flex;
+  justify-content: center;
+}
+
+.container-profile .avatar{
+  width: 200px;
+  height: 200px;
+}
+
+.container-profile .info-grid-item .box{
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+}
+
+.container-profile .info{
+  display: flex;
+  align-items: center;
+}
+
+.container-profile .edit-icon{
+  font-size: 25px;
+  margin-left: 15px;
+}
+
+.container-profile .university-icon{
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.container-profile .grid-item{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media only screen and (max-width: 600px){
+  .container-profile .container{ 
+      width: 420px;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 900px){
+  .container-profile .container{ 
+      width: 500px;
+  }
+}
