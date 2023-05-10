@@ -38,6 +38,45 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
+const events = [
+    {
+        title: 'Taste - Tastic “I Can Cook”',
+        image: '',
+        enrolled_participants: 3,
+        total_participants: 6,
+        date: "28 Oct. 2023",
+        time: "16:00",
+        address: "Victory Square, Timișoara",
+        author_lastname: "Chiara",
+        author_firstname: "Charlotte - Ava",
+        rating: 2.5
+    }, 
+    {
+        title: 'Taste - Tastic “I Can Cook”',
+        image: '',
+        enrolled_participants: 3,
+        total_participants: 6,
+        date: "28 Oct. 2023",
+        time: "16:00",
+        address: "Victory Square, Timișoara",
+        author_lastname: "Chiara",
+        author_firstname: "Charlotte - Ava",
+        rating: 2.5
+    }, 
+    {
+        title: 'Taste - Tastic “I Can Cook”',
+        image: '',
+        enrolled_participants: 3,
+        total_participants: 6,
+        date: "28 Oct. 2023",
+        time: "16:00",
+        address: "Victory Square, Timișoara",
+        author_lastname: "Chiara",
+        author_firstname: "Charlotte - Ava",
+        rating: 2.5
+    }, 
+];
+
 const Feed = () => {
     const dispatch = useDispatch();
     const eventsFromDB = useSelector(state => state.events);
@@ -96,10 +135,10 @@ const Feed = () => {
                         <StyledInputBase placeholder="Search…" inputProps={{"aria-label": "search"}}/>
                     </Search>
                 </Grid>
-                {eventsFromDB.map((ev, index) => {
+                {events.map((ev, index) => {
                     return(
                         <Grid item xs={12} className="event-grid" key={index}>
-                            <EventCard ev={ev}/>
+                            <EventCard event={ev}/>
                         </Grid>
                     )
                 })}
