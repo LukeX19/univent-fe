@@ -1,6 +1,6 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import NavbarLoggedIn from "../../navbar_logged/navbar_logged.js";
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormGroup, Grid, InputBase, Slide } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, InputBase, Radio, RadioGroup, Slide } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -8,6 +8,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import EventCard from '../../event_card/event_card.js';
 import "../feed/feed.css";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllEventsAction } from "../../../actions/events.js";
+import { getAllEventTypesAction } from "../../../actions/eventTypes.js"
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -35,48 +38,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const events = [
-    {   
-        title: 'Taste - Tastic “I Can Cook”',
-        image: '',
-        enrolled_participants: 3,
-        total_participants: 6,
-        date: "28 Oct. 2023",
-        time: "16:00",
-        address: "Victory Square, Timișoara",
-        author_lastname: "Chiara",
-        author_firstname: "Charlotte - Ava",
-        rating: 2.5
-    },
-    {   
-        title: 'Taste - Tastic “I Can Cook”',
-        image: '',
-        enrolled_participants: 3,
-        total_participants: 6,
-        date: "28 Oct. 2023",
-        time: "16:00",
-        address: "Victory Square, Timișoara",
-        author_lastname: "Chiara",
-        author_firstname: "Charlotte - Ava",
-        rating: 2.5
-    },
-    {   
-        title: 'Taste - Tastic “I Can Cook”',
-        image: '',
-        enrolled_participants: 3,
-        total_participants: 6,
-        date: "28 Oct. 2023",
-        time: "16:00",
-        address: "Victory Square, Timișoara",
-        author_lastname: "Chiara",
-        author_firstname: "Charlotte - Ava",
-        rating: 2.5
-    }
-];
-
-const event_types = ["Cooking", "Games", "Karaoke", "Beauty"];
-
 const Feed = () => {
+    const dispatch = useDispatch();
+    const eventsFromDB = useSelector(state => state.events);
+    const eventTypesFromDB = useSelector(state => state.eventTypes);
+
+    useEffect(() => {
+        dispatch(getAllEventsAction());
+        dispatch(getAllEventTypesAction())
+    }, [dispatch]);
+
+    //console.log(eventsFromDB);
+    //console.log(eventTypesFromDB);
+
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
@@ -86,6 +60,25 @@ const Feed = () => {
     const handleClose = () => {
         setOpen(false);
     }
+
+    const [results, setResults] = useState(0);
+
+    const handleChange = (event) => {
+        if(event.target.checked) {
+            const eventTypeID = event.target.value;
+            let count = 0;
+            const filteredEvents = eventsFromDB.reduce((filtered, event) => {
+                if (event.eventTypeID === eventTypeID) {
+                  count++;
+                  filtered.push(event);
+                }
+                return filtered;
+            }, []);
+            setResults(count);
+            //console.log(count);
+            //console.log(filteredEvents);
+        }
+    };
 
     return(
         <>
@@ -103,10 +96,10 @@ const Feed = () => {
                         <StyledInputBase placeholder="Search…" inputProps={{"aria-label": "search"}}/>
                     </Search>
                 </Grid>
-                {events.map((ev, index) => {
+                {eventsFromDB.map((ev, index) => {
                     return(
                         <Grid item xs={12} className="event-grid" key={index}>
-                            <EventCard event={ev}/>
+                            <EventCard ev={ev}/>
                         </Grid>
                     )
                 })}
@@ -119,17 +112,21 @@ const Feed = () => {
                 </IconButton>
             </DialogTitle>
             <DialogContent className="dialog-content" dividers={true}>
-                <FormGroup>
-                    {event_types.sort().map((event_type, index) =>{
+                <RadioGroup>
+                    {eventTypesFromDB.sort().map((event_type, index) => {
                         return(
-                            <FormControlLabel control={<Checkbox/>} label={event_type} key={index}/>
+                            <FormControlLabel value={event_type.eventTypeID} control={<Radio/>} label={event_type.name} key={index} onChange={handleChange}/>
                         )
                     })}
-                </FormGroup>
+                </RadioGroup>
             </DialogContent>
             <DialogActions p={3}>
                 <Box className="dialog-actions">
-                    <Button onClick={handleClose} variant="contained">SEE 200 RESULTS</Button>
+                    {results > 0 && (
+                        <Button onClick={handleClose} variant="contained">
+                        {results > 1 ? `SEE ${results} RESULTS` : `SEE ${results} RESULT`}
+                        </Button>
+                    )}
                 </Box>
             </DialogActions>
         </Dialog> 

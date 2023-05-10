@@ -8,11 +8,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import '../signin/signin.css';
+import { useDispatch } from 'react-redux';
+import { loginAction } from '../../../actions/identity';
 
 const initialState = {email: "", password: ""};
 
 const Signin = () => {
-
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState(initialState);
@@ -37,7 +39,12 @@ const Signin = () => {
     });
 
     const onSubmit = () => {
-        console.log(formData);
+        const formDataLogin = {
+            username: formData.email,
+            password: formData.password
+        };
+
+        dispatch(loginAction(formDataLogin, navigate));
     };
 
     return(

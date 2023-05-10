@@ -3,9 +3,15 @@ import { Grid, Typography, Box, Button, Avatar, Badge } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { format } from 'date-fns';
+import { registerAction } from '../../../actions/identity';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import './signup.css'
 
 const StepThree = ({formData, setFormData, handleBack}) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const uploadImage = (event) => {
         var file = event.target.files[0];
@@ -23,7 +29,20 @@ const StepThree = ({formData, setFormData, handleBack}) => {
     }
 
     const submit = () => {
-        console.log(formData);
+        const formDataSignUp = {
+            username: formData.email,
+            password: formData.password,
+            universityID: formData.university,
+            year: formData.year,
+            firstName: formData.firstname,
+            lastName: formData.lastname,
+            phoneNumber: formData.phoneNumber,
+            dateOfBirth: format(new Date(formData.dateOfBirth), "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+            hometown: formData.hometown,
+            profilePicture: formData.avatar
+        };
+
+        dispatch(registerAction(formDataSignUp, navigate));
     }
 
     return(
