@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Button, Container, IconButton, ListItemIcon, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -6,6 +6,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
+import jwt_decode from 'jwt-decode';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserProfileAction } from '../../actions/userProfiles'
 
 const pages = ['Explore Events', 'Host a New Event', 'My Events'];
 const settings = [
@@ -15,9 +18,20 @@ const settings = [
 ];
 
 function ResponsiveAppBar() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const userProfileFromDB = useSelector(state => state.userProfiles);
+    const decoded_token = jwt_decode(localStorage.getItem("token"));
+
+    useEffect(() => {
+        dispatch(getUserProfileAction(decoded_token.UserProfileId))
+    }, [dispatch]);
+
+    console.log(userProfileFromDB);
+
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -105,7 +119,26 @@ function ResponsiveAppBar() {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar sx={{ bgcolor: deepOrange[500], "&:hover": { bgcolor: deepOrange[900] }}}>N</Avatar>
+                                {
+                                    userProfileFromDB && userProfileFromDB.basicInfo && userProfileFromDB.basicInfo.profilePicture !== undefined ?
+                                    (
+                                        userProfileFromDB.basicInfo.profilePicture !== "" ?
+                                        (
+                                            <Avatar src={userProfileFromDB.basicInfo.profilePicture}/>
+                                        )
+                                        :
+                                        (
+                                            <Avatar sx={{ bgcolor: deepOrange[500], "&:hover": { bgcolor: deepOrange[900] }}}>
+                                                {userProfileFromDB.basicInfo.lastName.charAt(0)}
+                                                {userProfileFromDB.basicInfo.firstName.charAt(0)}
+                                            </Avatar>
+                                        )
+                                    )
+                                    :
+                                    (
+                                        <Avatar sx={{ bgcolor: deepOrange[500], "&:hover": { bgcolor: deepOrange[900] } }}/>
+                                    )
+                                }
                             </IconButton>
                         </Tooltip>
 
