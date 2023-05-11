@@ -5,16 +5,13 @@ import { useForm } from 'react-hook-form';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import GoogleIcon from '@mui/icons-material/Google';
-import FacebookIcon from '@mui/icons-material/Facebook';
+import { login } from "../../../api/index";
 import '../signin/signin.css';
-import { useDispatch } from 'react-redux';
-import { loginAction } from '../../../actions/identity';
 
 const initialState = {email: "", password: ""};
 
 const Signin = () => {
-    const dispatch = useDispatch();
+
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState(initialState);
@@ -39,12 +36,16 @@ const Signin = () => {
     });
 
     const onSubmit = () => {
-        const formDataLogin = {
+        login({
             username: formData.email,
             password: formData.password
-        };
-
-        dispatch(loginAction(formDataLogin, navigate));
+        }).then(function (response) {
+            localStorage.setItem("token", response.data.token);
+            navigate("/feed");
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
     };
 
     return(

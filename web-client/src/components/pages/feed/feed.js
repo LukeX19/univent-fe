@@ -7,10 +7,8 @@ import TuneIcon from '@mui/icons-material/Tune';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import EventCard from '../../event_card/event_card.js';
+import { getAllEventTypes, getAllEvents } from "../../../api/index.js";
 import "../feed/feed.css";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllEventsAction } from "../../../actions/events.js";
-import { getAllEventTypesAction } from "../../../actions/eventTypes.js"
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -38,58 +36,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const events = [
-    {
-        title: 'Taste - Tastic “I Can Cook”',
-        image: '',
-        enrolled_participants: 3,
-        total_participants: 6,
-        date: "28 Oct. 2023",
-        time: "16:00",
-        address: "Victory Square, Timișoara",
-        author_lastname: "Chiara",
-        author_firstname: "Charlotte - Ava",
-        rating: 2.5
-    }, 
-    {
-        title: 'Taste - Tastic “I Can Cook”',
-        image: '',
-        enrolled_participants: 3,
-        total_participants: 6,
-        date: "28 Oct. 2023",
-        time: "16:00",
-        address: "Victory Square, Timișoara",
-        author_lastname: "Chiara",
-        author_firstname: "Charlotte - Ava",
-        rating: 2.5
-    }, 
-    {
-        title: 'Taste - Tastic “I Can Cook”',
-        image: '',
-        enrolled_participants: 3,
-        total_participants: 6,
-        date: "28 Oct. 2023",
-        time: "16:00",
-        address: "Victory Square, Timișoara",
-        author_lastname: "Chiara",
-        author_firstname: "Charlotte - Ava",
-        rating: 2.5
-    }, 
-];
-
 const Feed = () => {
-    const dispatch = useDispatch();
-    const eventsFromDB = useSelector(state => state.events);
-    const eventTypesFromDB = useSelector(state => state.eventTypes);
-
-    useEffect(() => {
-        dispatch(getAllEventsAction());
-        dispatch(getAllEventTypesAction())
-    }, [dispatch]);
-
-    //console.log(eventsFromDB);
-    //console.log(eventTypesFromDB);
-
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
@@ -100,22 +47,41 @@ const Feed = () => {
         setOpen(false);
     }
 
-    const [results, setResults] = useState(0);
+    const [eventTypes, setEventTypes] = useState([]);
+    useEffect(() => {
+        getAllEventTypes().then(function (response) {
+            setEventTypes(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    }, []);
 
+    const [events, setEvents] = useState([]);
+    useEffect(() => {
+        getAllEvents().then(function (response) {
+            setEvents(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    }, []);
+
+    const [results, setResults] = useState(0);
     const handleChange = (event) => {
-        if(event.target.checked) {
+        if(event.target.checked)
+        {
             const eventTypeID = event.target.value;
             let count = 0;
-            const filteredEvents = eventsFromDB.reduce((filtered, event) => {
-                if (event.eventTypeID === eventTypeID) {
-                  count++;
-                  filtered.push(event);
+            events.reduce((filtered, event) => {
+                if (event.eventTypeID === eventTypeID) 
+                {
+                    count++;
+                    filtered.push(event);
                 }
                 return filtered;
             }, []);
             setResults(count);
-            //console.log(count);
-            //console.log(filteredEvents);
         }
     };
 
@@ -152,7 +118,7 @@ const Feed = () => {
             </DialogTitle>
             <DialogContent className="dialog-content" dividers={true}>
                 <RadioGroup>
-                    {eventTypesFromDB.sort().map((event_type, index) => {
+                    {eventTypes.map((event_type, index) =>{
                         return(
                             <FormControlLabel value={event_type.eventTypeID} control={<Radio/>} label={event_type.name} key={index} onChange={handleChange}/>
                         )
