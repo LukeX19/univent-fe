@@ -2,9 +2,8 @@ import { React, useState, useEffect } from 'react';
 import NavbarLoggedIn from "../../navbar_logged/navbar_logged.js";
 import { Box, Button, Grid, Slide, Paper, Typography, Dialog, DialogContent, DialogTitle, Divider, Avatar, Rating } from '@mui/material';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
-import PinDropIcon from '@mui/icons-material/PinDrop';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import NearMeIcon from '@mui/icons-material/NearMe';
@@ -14,9 +13,9 @@ import { useParams } from "react-router-dom";
 import cooking from "../../images/cooking.png";
 import girl from "../../images/girl.jpg";
 import maps from "../../images/maps.jpg";
-import "../event_page/event_page.css";
 import { getEventById, getEventTypeById, getUserProfileById } from '../../../api/index.js';
 import { format } from "date-fns";
+import "../event_page/event_page.css";
 
 const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
 localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
@@ -47,10 +46,10 @@ const EventPage = () => {
     }, [param.eventID]);
 
     const formattedStartDate = eventInfo.startTime ? 
-        format(new Date(eventInfo.startTime), "dd.MM.yyyy")
+        format(new Date(eventInfo.startTime), "dd.MM.yyyy 'at' HH:mm")
     : '';
-    const formattedStartTime = eventInfo.startTime ? 
-        format(new Date(eventInfo.startTime), "HH:mm")
+    const formattedEndTime = eventInfo.endTime ? 
+        format(new Date(eventInfo.endTime), "dd.MM.yyyy 'at' HH:mm")
     : '';
 
     const [open, setOpen] = useState(false);
@@ -167,8 +166,9 @@ const EventPage = () => {
                                 {eventInfo.startTime && (
                                     [
                                         {icon: <Diversity3Icon className="icon"/>, text: `3/${eventInfo.maximumParticipants} Participants Joined`},
-                                        {icon: <CalendarMonthIcon className="icon"/>, text: formattedStartDate},
-                                        {icon: <AccessTimeIcon className="icon"/>, text: formattedStartTime},
+                                        {icon: <EventAvailableIcon className="icon"/>, text: formattedStartDate},
+                                        {icon: <HourglassBottomIcon className="icon"/>, text: formattedEndTime}
+                                        //{icon: <AccessTimeIcon className="icon"/>, text: formattedStartTime},
                                     ]).map(({ icon, text }, index) => (
                                         <Grid item key={index} xs={12} py={1} display="flex">
                                             {icon} <Typography px={3} fontSize="18px">{text}</Typography>
