@@ -5,8 +5,11 @@ import { deepOrange } from '@mui/material/colors';
 import cooking from "../images/cooking.png";
 import { getEventTypeById, getUserProfileById } from "../../api";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const EventCard = ({ event }) => {
+    const navigate = useNavigate();
+
     const formattedStartTime = format(new Date(event.startTime), "dd.MM.yyyy 'at' HH:mm");
   
     const [eventType, setEventType] = useState("");
@@ -93,7 +96,7 @@ const EventCard = ({ event }) => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} sm={12} md={5} px={{xs: 5, sm: 3, md: 2}} py={{xs: 4, sm: 4, md: 0}} className="grid-button" >
-                                <Button variant="contained">Check more Details</Button>
+                                <Button variant="contained" onClick={() => {navigate(`/event/${event.eventID}`)}}>Check more Details</Button>
                             </Grid>
                         </Grid>
                     </Grid>
