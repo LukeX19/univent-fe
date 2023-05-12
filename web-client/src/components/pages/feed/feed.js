@@ -67,13 +67,22 @@ const Feed = () => {
         })
     }, []);
 
+    const [showFilteredResults, setShowFilteredResults] = useState(false);
     const [results, setResults] = useState(0);
+    const [filtered, setFiltered] = useState([]);
     const handleChange = (event) => {
-        if(event.target.checked)
+        if (event.target.value === 'all')
+        {
+            // If the "All Events" or "No Filter" option is selected
+            setResults(events.length);
+            setFiltered([]);
+            setShowFilteredResults(false); // Set showFilteredResults to false to display all events
+        } 
+        else if(event.target.checked)
         {
             const eventTypeID = event.target.value;
             let count = 0;
-            events.reduce((filtered, event) => {
+            const filteredEvents = events.reduce((filtered, event) => {
                 if (event.eventTypeID === eventTypeID) 
                 {
                     count++;
@@ -82,7 +91,16 @@ const Feed = () => {
                 return filtered;
             }, []);
             setResults(count);
+            setFiltered(filteredEvents);
+            setShowFilteredResults(true); // Set showFilteredResults to true when a radio button is selected
         }
+        else
+        {
+            setResults(0);
+            setFiltered([]);
+            setShowFilteredResults(false); // Set showFilteredResults to false when no radio button is selected
+        }
+        //setOpen(false); // Automatically close the filter dialog when a radio button is pressed
     };
 
     return(
@@ -101,37 +119,62 @@ const Feed = () => {
                         <StyledInputBase placeholder="Search…" inputProps={{"aria-label": "search"}}/>
                     </Search>
                 </Grid>
-                {events.map((ev, index) => {
-                    return(
+                {    
+                    showFilteredResults ?
+                    filtered.map((ev, index) => (
                         <Grid item xs={12} className="event-grid" key={index}>
-                            <EventCard event={ev}/>
+                            <EventCard event={ev} />
                         </Grid>
-                    )
-                })}
+                    ))
+                    : events.map((ev, index) => (
+                        <Grid item xs={12} className="event-grid" key={index}>
+                            <EventCard event={ev} />
+                        </Grid>
+                    ))
+                }
             </Grid>
         </Grid>
         <Dialog className="dialog-feed" scroll={"paper"} onClose={handleClose} open={open} TransitionComponent={Slide} TransitionProps={{direction: 'up', timeout: {enter: 600, exit: 300}}}>
-            <DialogTitle>Filter by Event Type
-                <IconButton onClick={handleClose} sx={{position: "absolute", right: 9, top: 10}}>
-                    <CloseIcon />
-                </IconButton>
+            <DialogTitle sx={{ textAlign: 'center' }}>Filter by Event Type
             </DialogTitle>
             <DialogContent className="dialog-content" dividers={true}>
                 <RadioGroup>
+                    <FormControlLabel value="all" control={<Radio />} label="All Events" onChange={handleChange} />
                     {eventTypes.map((event_type, index) =>{
                         return(
                             <FormControlLabel value={event_type.eventTypeID} control={<Radio/>} label={event_type.name} key={index} onChange={handleChange}/>
-                        )
+                        );
                     })}
                 </RadioGroup>
             </DialogContent>
             <DialogActions p={3}>
                 <Box className="dialog-actions">
-                    {results > 0 && (
-                        <Button onClick={handleClose} variant="contained">
-                        {results > 1 ? `SEE ${results} RESULTS` : `SEE ${results} RESULT`}
-                        </Button>
-                    )}
+                    {showFilteredResults && results === 0 ? 
+                        (
+                            <span>No events available at the moment</span>
+                        )
+                        :
+                        (
+                            <>
+                                {results > 0 ? 
+                                    (
+                                        <Button onClick={() => {handleClose()}} variant="contained">
+                                            {results > 1 ? `SEE ${results} RESULTS` : `SEE ${results} RESULT`}
+                                        </Button>
+                                    )
+                                    :
+                                    null
+                                }
+                                {results === 0 && 
+                                    (
+                                        <Button onClick={() => {handleClose()}} variant="contained">
+                                            SEE ALL EVENTS
+                                        </Button>
+                                    )
+                                }
+                            </>
+                        )
+                    }
                 </Box>
             </DialogActions>
         </Dialog> 
