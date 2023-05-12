@@ -6,37 +6,55 @@ import cooking from "../images/cooking.png";
 import { getEventTypeById, getUserProfileById } from "../../api";
 import { format } from "date-fns";
 
-const EventCard = ({event}) => {
-    const formattedStartTime = format(new Date(event.startTime), 'dd.MM.yyyy \'at\' HH:mm');
-
-    const [eventType, setEventType] = useState('');
+const EventCard = ({ event }) => {
+    const formattedStartTime = format(new Date(event.startTime), "dd.MM.yyyy 'at' HH:mm");
+  
+    const [eventType, setEventType] = useState("");
+    const [eventTypeLoading, setEventTypeLoading] = useState(true);
+  
     useEffect(() => {
-        getEventTypeById(event.eventTypeID).then(function (response) {
-            setEventType(response.data.name);
+      getEventTypeById(event.eventTypeID)
+        .then(function (response) {
+          setEventType(response.data.name);
+          setEventTypeLoading(false);
         })
         .catch(function (error) {
-            console.log(error);
-        })
-    }, []);
-
+          console.log(error);
+        });
+    }, [event.eventTypeID]);
+  
     const [userAuthor, setUserAuthor] = useState({});
+    const [userAuthorLoading, setUserAuthorLoading] = useState(true);
+  
     useEffect(() => {
-        getUserProfileById(event.userProfileID).then(function (response) {
-            setUserAuthor(response.data.basicInfo);
+      getUserProfileById(event.userProfileID)
+        .then(function (response) {
+          setUserAuthor(response.data.basicInfo);
+          setUserAuthorLoading(false);
         })
         .catch(function (error) {
-            console.log(error);
-        })
-    }, []);
-
-    return(
+          console.log(error);
+        });
+    }, [event.userProfileID]);
+  
+    return (
         <Grid container className="container-event-card">
             <Paper elevation={10} className="paper">
                 <Grid container>
                     <Grid item xs={12} md={4} className="grid-image">
                         <img src={cooking} width="100%" height="100%"/>
                         <Box className="box">
-                            <Typography pl={2} py={2} className="placeholder">{eventType}</Typography>
+                            {eventTypeLoading ? (
+                                <Typography pl={2} py={2} className="placeholder">
+                                    Loading...
+                                </Typography>
+                            )
+                            :
+                            (
+                                <Typography pl={2} py={2} className="placeholder">
+                                    {eventType}
+                                </Typography>
+                            )}
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={8}>
