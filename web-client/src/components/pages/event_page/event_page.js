@@ -3,6 +3,7 @@ import NavbarLoggedIn from "../../navbar_logged/navbar_logged.js";
 import { Box, Button, Grid, Slide, Paper, Typography, Dialog, DialogContent, DialogTitle, Divider, Avatar, Rating } from '@mui/material';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import EventBusyIcon from '@mui/icons-material/EventBusy';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -17,9 +18,9 @@ import { getEventById, getEventTypeById, getUserProfileById } from '../../../api
 import { format } from "date-fns";
 import "../event_page/event_page.css";
 
-const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
-localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
-const storedMapCenter = JSON.parse(localStorage.getItem('mapCenter'));
+// const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
+// localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
+// const storedMapCenter = JSON.parse(localStorage.getItem('mapCenter'));
 
 const EventPage = () => {
     const param = useParams();
@@ -51,6 +52,15 @@ const EventPage = () => {
     const formattedEndTime = eventInfo.endTime ? 
         format(new Date(eventInfo.endTime), "dd.MM.yyyy 'at' HH:mm")
     : '';
+
+    const storedMapCenter = {
+        lat: parseFloat(eventInfo.locationLat),
+        lng: parseFloat(eventInfo.locationLng)
+    };
+    // const storedMapCenter = {
+    //     lat: !isNaN(parseFloat(eventInfo.locationLat)) ? parseFloat(eventInfo.locationLat) : 0,
+    //     lng: !isNaN(parseFloat(eventInfo.locationLng)) ? parseFloat(eventInfo.locationLng) : 0
+    // };
 
     const [open, setOpen] = useState(false);
 
@@ -167,7 +177,7 @@ const EventPage = () => {
                                     [
                                         {icon: <Diversity3Icon className="icon"/>, text: `3/${eventInfo.maximumParticipants} Participants Joined`},
                                         {icon: <EventAvailableIcon className="icon"/>, text: formattedStartDate},
-                                        {icon: <HourglassBottomIcon className="icon"/>, text: formattedEndTime}
+                                        {icon: <EventBusyIcon className="icon"/>, text: formattedEndTime}
                                         //{icon: <AccessTimeIcon className="icon"/>, text: formattedStartTime},
                                     ]).map(({ icon, text }, index) => (
                                         <Grid item key={index} xs={12} py={1} display="flex">
@@ -188,20 +198,22 @@ const EventPage = () => {
                         <Typography pb={2} variant="h6">Location on the map</Typography>
                         <Divider />
                         <Box py={2}>
-                            <GoogleMap
-                            center={storedMapCenter}
-                            zoom={15}
-                            mapContainerStyle={{width: "100%", height: "600px"}}
-                            onLoad={(map) => setMap(map)}
-                            >
-                                <Grid item height="50px" position="relative" sx={{mt: 10}}>
-                                    <Box position="absolute" bottom="0px" left="0px">
-                                        <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(storedMapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
-                                    </Box>
-                                </Grid>
+                            {eventInfo.locationLat && eventInfo.locationLng && (
+                                <GoogleMap
+                                    center={storedMapCenter}
+                                    zoom={15}
+                                    mapContainerStyle={{width: "100%", height: "600px"}}
+                                    onLoad={(map) => setMap(map)}
+                                >
+                                    <Grid item height="50px" position="relative" sx={{mt: 10}}>
+                                        <Box position="absolute" bottom="0px" left="0px">
+                                            <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(storedMapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
+                                        </Box>
+                                    </Grid>
 
-                                <MarkerF position={storedMapCenter}/>
-                            </GoogleMap>
+                                    <MarkerF position={storedMapCenter}/>
+                                </GoogleMap>
+                            )}
                         </Box>
                     </Grid>
 
