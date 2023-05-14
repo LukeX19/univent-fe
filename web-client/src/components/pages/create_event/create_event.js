@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react';
-import { Box, Button, Grid, Paper, Typography, Autocomplete, TextField, InputBase } from '@mui/material';
+import { Box, Button, Grid, Paper, Typography, TextField, InputBase, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import NearMeIcon from '@mui/icons-material/NearMe';
@@ -11,17 +11,17 @@ import dayjs from 'dayjs';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api"
-import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api"
+import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
+import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api";
+import { getAllEventTypes, addEvent } from "../../../api/index.js";
+import { format } from 'date-fns';
 import cooking from "../../images/cooking.png";
 import maps from "../../images/maps.jpg"
 import "../create_event/create_event.css";
 
-const initialState = {eventName: "", eventType: "", startDate: "", startTime: "", endDate: "", endTime: "", nrParticipants: "", description: "", mapsAPI: ""};
+const initialState = {eventName: "", eventType: "", startDate: "", startTime: "", endDate: "", endTime: "", nrParticipants: "", description: "", mapsLat: "", mapsLng: ""};
 
-const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
-localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
-const storedMapCenter = JSON.parse(localStorage.getItem('mapCenter'));
+const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592};
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -51,13 +51,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const CreateEvent = () => {
+    const [eventTypes, setEventTypes] = useState([]);
+    useEffect(() => {
+        getAllEventTypes().then(function (response) {
+            setEventTypes(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    }, []);
 
     const [formData, setFormData] = useState(initialState);
 
     const [errorMessage, setErrorMessage] = useState("");
 
     const schema = yup.object().shape({
-        nrParticipants: yup.number().positive().integer().min(1, "Number of participants must be greater than or equal to 1").max(100, "Number of participants must be less than or equal to 100"),
+        nrParticipants: yup.number().positive().integer().min(1, "Number of participants must be greater than or equal to 1").max(25, "Number of participants must be less than or equal to 25"),
     });
 
     const {register, handleSubmit, formState: {errors}} = useForm({
@@ -98,7 +107,25 @@ const CreateEvent = () => {
     const onSubmit = () => {
         if(checkDateTime())
         {
-            console.log(formData);
+            const formattedStartTime = format(new Date(formData.startDate + ' ' + formData.startTime), "yyyy-MM-dd'T'HH:mm:ss.SSS");
+            const formattedEndTime = format(new Date(formData.endDate + ' ' + formData.endTime), "yyyy-MM-dd'T'HH:mm:ss.SSS");
+            addEvent(
+                {
+                    eventTypeID: formData.eventType,
+                    name: formData.eventName,
+                    description: formData.description,
+                    maximumParticipants: formData.nrParticipants,
+                    startTime: formattedStartTime,
+                    endTime: formattedEndTime,
+                    locationLat: formData.mapsLat,
+                    locationLng: formData.mapsLng
+                }
+            ).then(function (response) {
+                console.log(response.status);
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
         }
     }
 
@@ -160,14 +187,24 @@ const CreateEvent = () => {
                             <TimelineContent>
                                 <Typography>CHOOSE EVENT TYPE</Typography>
                                 <Grid container py={5}>
-                                    <Autocomplete
-                                        disablePortal
-                                        onChange={(event, value) => {setFormData({...formData, eventType: value})}}
-                                        options={['Cooking', 'Karaoke', 'Dance']}
-                                        required
-                                        sx={{width: 300}}
-                                        renderInput={(params) => <TextField {...params} required size="small" variant="standard" placeholder="Select event type"/>}
-                                    />
+                                    <FormControl fullWidth>
+                                        <InputLabel id="select">Event Type </InputLabel>
+                                        <Select
+                                            labelId="select"
+                                            value={formData.eventType}
+                                            label="Event Type"
+                                            name="eventType"
+                                            required
+                                            onChange={handleChange}
+                                        >
+                                            <MenuItem value=""><em>None</em></MenuItem>
+                                            {eventTypes.map((evType, index) => {
+                                                return(
+                                                    <MenuItem value={evType.eventTypeID} key={index}>{evType.name}</MenuItem>
+                                                )
+                                            })}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                             </TimelineContent>
                         </TimelineItem>
@@ -182,7 +219,7 @@ const CreateEvent = () => {
                                 <Grid container py={3}>
                                     <Grid item xs={12} md={5} className="grid-start" >
                                         <Box>
-                                            <Typography>START</Typography>
+                                            <Typography>Starts</Typography>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                 <MobileDateTimePicker
                                                     ampm={false}
@@ -200,7 +237,7 @@ const CreateEvent = () => {
                                     </Grid>
                                     <Grid item xs={12} md={5} className="grid-end">
                                         <Box>
-                                            <Typography>END</Typography>
+                                            <Typography>Ends</Typography>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                 <MobileDateTimePicker
                                                     ampm={false}
@@ -250,7 +287,7 @@ const CreateEvent = () => {
                                 <TimelineConnector/>
                             </TimelineSeparator>
                             <TimelineContent>
-                                <Typography>DESCRIBE YOUT EVENT</Typography>
+                                <Typography>DESCRIBE YOUR EVENT</Typography>
                                 <Grid container py={5}>
                                     <TextField
                                         name="description"
@@ -281,14 +318,21 @@ const CreateEvent = () => {
                                                 </SearchIconWrapper>
 
                                                 <StyledInputBase placeholder="Search…" inputProps={{"aria-label": "search"}}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === "Enter") {
-                                                        e.preventDefault();
-                                                        if (marker && autocomplete && autocomplete.getPlace()) {
-                                                        marker.setPosition(autocomplete.getPlace().geometry.location);
-                                                        map.panTo(autocomplete.getPlace().geometry.location);
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") {
+                                                            e.preventDefault();
+                                                            if (marker && autocomplete && autocomplete.getPlace())
+                                                            {
+                                                                marker.setPosition(autocomplete.getPlace().geometry.location);
+                                                                map.panTo(autocomplete.getPlace().geometry.location);
+                                                                const latLng = marker.getPosition();
+                                                                setFormData((prevFormData) => ({
+                                                                    ...prevFormData,
+                                                                    mapsLat: latLng.lat().toString(),
+                                                                    mapsLng: latLng.lng().toString()
+                                                                }));
+                                                            }
                                                         }
-                                                    }
                                                     }}
                                                 />
                                             </Search>
@@ -296,18 +340,28 @@ const CreateEvent = () => {
                                     </Box>
 
                                     <GoogleMap
-                                        center={storedMapCenter}
+                                        center={mapCenter}
                                         zoom={15}
                                         mapContainerStyle={{width: "100%", height: "600px"}}
                                         onLoad={(map) => setMap(map)}
                                     >
                                         <Grid item height="50px" position="relative" sx={{mt: 10}}>
                                             <Box position="absolute" bottom="0px" left="0px">
-                                                <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(storedMapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
+                                                <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(mapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
                                             </Box>
                                         </Grid>
                                         
-                                        <MarkerF position={storedMapCenter} onLoad={(marker) => setMarker(marker)}/>
+                                        <MarkerF
+                                            position={mapCenter}
+                                            onLoad={(marker) => {
+                                                setMarker(marker);
+                                                setFormData((prevFormData) => ({
+                                                    ...prevFormData,
+                                                    mapsLat: mapCenter.lat,
+                                                    mapsLng: mapCenter.lng
+                                                }));
+                                            }}
+                                        />
                                     </GoogleMap>
                                 </Grid>
                             </TimelineContent>
