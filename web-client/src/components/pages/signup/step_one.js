@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { parse, differenceInYears } from 'date-fns';
 import './signup.css';
 import { getAllUniversities } from '../../../api';
 
@@ -27,6 +28,11 @@ const StepOne = ({formData, setFormData, handleChange, handleNext}) => {
         firstname: yup.string().matches(/[a-zA-ZăâîșțĂÂÎȘȚ -]+$/, "Must be only letters"),
         lastname: yup.string().matches(/[a-zA-ZăâîșțĂÂÎȘȚ -]+$/, "Must be only letters"),
         phoneNumber: yup.string().matches(/^\+?\d{10,14}$/, "Invalid phone number format"),
+        dateOfBirth: yup.string()
+                        .test("dateOfBirth", "Age should be between 18 and 26", function (value) {
+                            const parsedDate = parse(value, 'MM-dd-yyyy', new Date());
+                            return differenceInYears(new Date(), parsedDate) >= 18 && differenceInYears(new Date(), parsedDate) <= 26;
+                        }),
         hometown: yup.string().matches(/[a-zA-ZăâîșțĂÂÎȘȚ -]+$/, "Must be only letters")
     });
 
@@ -107,8 +113,9 @@ const StepOne = ({formData, setFormData, handleChange, handleNext}) => {
                 </Grid>
                 <Grid item xs={12} py={1}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                         <DateField
+                        <DateField
                             required
+                            {...register("dateOfBirth")}
                             label="Date of birth"
                             value={formData.dateOfBirth}
                             onChange={(newValue) => {setFormData({...formData, dateOfBirth: newValue})}}
@@ -116,6 +123,7 @@ const StepOne = ({formData, setFormData, handleChange, handleNext}) => {
                             sx={{width: '100%'}}
                         />
                     </LocalizationProvider>
+                    <Typography className="error">{errors.dateOfBirth?.message}</Typography>
                 </Grid>
                 <Grid item xs={12} py={1}>
                     <TextField {...register("hometown")} required value={formData.hometown} onChange={handleChange} type="text" label="Hometown" variant="outlined" fullWidth/>
