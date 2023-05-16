@@ -8,7 +8,7 @@ import StepTwo from './step_two.js';
 import StepThree from './step_three.js';
 import '../signup/signup.css';
 
-const initialState = {firstname: "", lastname: "", university: "", year: "", phoneNumber: "", password: "", confirmPassword: "", avatar: ""};
+const initialState = {firstname: "", lastname: "", university: "", year: "", phoneNumber: "", dateOfBirth: null, hometown: "", email: "", password: "", confirmPassword: "", avatar: ""};
 
 const Signup = () => {
 

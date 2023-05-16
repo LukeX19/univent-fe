@@ -1,11 +1,15 @@
-import { React } from 'react';
-import { Grid, Typography, Box, Button, Avatar, Badge } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { React } from "react";
+import { Grid, Typography, Box, Button, Avatar, Badge } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { register } from "../../../api/index";
 import './signup.css'
 
 const StepThree = ({formData, setFormData, handleBack}) => {
+    const navigate = useNavigate();
 
     const uploadImage = (event) => {
         var file = event.target.files[0];
@@ -23,7 +27,24 @@ const StepThree = ({formData, setFormData, handleBack}) => {
     }
 
     const submit = () => {
-        console.log(formData);
+        register({
+            username: formData.email,
+            password: formData.password,
+            universityID: formData.university,
+            year: formData.year,
+            firstName: formData.firstname,
+            lastName: formData.lastname,
+            phoneNumber: formData.phoneNumber,
+            dateOfBirth: format(new Date(formData.dateOfBirth), "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+            hometown: formData.hometown,
+            profilePicture: formData.avatar
+        }).then(function (response) {
+            localStorage.setItem("token", response.data.token);
+            navigate("/feed");
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
     }
 
     return(

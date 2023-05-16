@@ -26,7 +26,7 @@ function App() {
           <Route exact path="/change-password" element={<ChangePassword/>}/>
           <Route exact path="/feedback-form" element={<FeedbackForm/>}/>
           <Route exact path="/signin" element={<Signin/>}/>
-          <Route exact path="/signup" element={<Signup/>}/>
+          <Route exact path="/register" element={<Signup/>}/>
         </Routes>
       </BrowserRouter>
     </>
