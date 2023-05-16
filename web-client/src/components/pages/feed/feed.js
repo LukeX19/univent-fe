@@ -4,8 +4,6 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormCon
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import EventCard from '../../event_card/event_card.js';
 import { getAllEventTypes, getAllEvents } from "../../../api/index.js";
 import "../feed/feed.css";
@@ -67,6 +65,8 @@ const Feed = () => {
         })
     }, []);
 
+    const [searchEvent, setSearchEvent] = useState("");
+
     const [showFilteredResults, setShowFilteredResults] = useState(false);
     const [results, setResults] = useState(0);
     const [filtered, setFiltered] = useState([]);
@@ -116,17 +116,39 @@ const Feed = () => {
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
-                        <StyledInputBase placeholder="Search…" inputProps={{"aria-label": "search"}}/>
+                        <StyledInputBase placeholder="Search…" onChange={(event) => {
+                            setSearchEvent(event.target.value);
+                        }} inputProps={{"aria-label": "search"}}/>
                     </Search>
                 </Grid>
                 {    
                     showFilteredResults ?
-                    filtered.map((ev, index) => (
+                    filtered.filter((value) => {
+                        if(searchEvent == "")
+                        {
+                            return value;
+                        }
+                        else if((value.name.toLowerCase() + "").includes(searchEvent.toLowerCase()))
+                        {
+                            return value;
+                        }
+                    })
+                    .map((ev, index) => (
                         <Grid item xs={12} className="event-grid" key={index}>
                             <EventCard event={ev} />
                         </Grid>
                     ))
-                    : events.map((ev, index) => (
+                    : events.filter((value) => {
+                        if(searchEvent == "")
+                        {
+                            return value;
+                        }
+                        else if((value.name.toLowerCase() + "").includes(searchEvent.toLowerCase()))
+                        {
+                            return value;
+                        }
+                    })
+                    .map((ev, index) => (
                         <Grid item xs={12} className="event-grid" key={index}>
                             <EventCard event={ev} />
                         </Grid>
