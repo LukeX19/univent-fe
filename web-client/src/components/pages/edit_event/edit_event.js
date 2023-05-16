@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { Box, Button, Grid, Paper, Typography, TextField, InputBase } from '@mui/material';
 import NavbarLoggedIn from '../../navbar_logged/navbar_logged.js';
 import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';
@@ -11,17 +11,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import NearMeIcon from '@mui/icons-material/NearMe';
-import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api"
-import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api"
+import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
+import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api";
+import { useParams } from "react-router-dom";
+import { getEventById, getEventTypeById, getUserProfileById, updateEvent } from '../../../api/index.js';
+import { format } from "date-fns";
 import maps from '../../images/maps.jpg';
 import cooking from '../../images/cooking.png';
 import '../edit_event/edit_event.css';
 
-const initialState = {eventName: "Helloo Goo Too Zoo", eventType: "Entertainment", startDate: "28-04-2023", startTime: "10:20", endDate: "29-04-2023", endTime: "20:15", nrParticipants: 3, description: "Hello Description", mapsAPI: ""};
+const initialState = {eventName: "", eventType: "", startDateTime: "", endDateTime: "", nrParticipants: 0, description: "", mapsLat: "", mapsLng: ""};
 
-const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
-localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
-const storedMapCenter = JSON.parse(localStorage.getItem('mapCenter'));
+//const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
+//localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
+//const storedMapCenter = JSON.parse(localStorage.getItem('mapCenter'));
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -51,10 +54,39 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const CreateEvent = () => {
+    const param = useParams();
 
     const [formData, setFormData] = useState(initialState);
 
-    const [errorMessage, setErrorMessage] = useState("");
+    const [eventInfo, setEventInfo] = useState({});
+    const [eventTypeInfo, setEventTypeInfo] = useState({});
+    useEffect(() => {
+        getEventById(param.eventID)
+            .then(function (response) {
+                setEventInfo(response.data);
+                setFormData({
+                    eventName: response.data.name,
+                    startDateTime: response.data.startTime,
+                    endDateTime: response.data.endTime,
+                    nrParticipants: response.data.maximumParticipants,
+                    description: response.data.description,
+                    mapsLat: response.data.locationLat,
+                    mapsLng: response.data.locationLng
+                });
+                return getEventTypeById(response.data.eventTypeID)
+                    .then(function (eventTypeResponse) {
+                        setEventTypeInfo(eventTypeResponse.data);
+                    });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, [param.eventID]);
+
+    const storedMapCenter = {
+        lat: parseFloat(formData.mapsLat),
+        lng: parseFloat(formData.mapsLng)
+    };
 
     const schema = yup.object().shape({
         nrParticipants: yup.number().positive().integer().min(1, "Number of participants must be greater than or equal to 1").max(100, "Number of participants must be less than or equal to 100"),
@@ -68,38 +100,21 @@ const CreateEvent = () => {
         setFormData({...formData, [e.target.name]: e.target.value});
     };
 
-    const checkDateTime = () => {
-
-        const startDateTime = new Date(formData.startDate + " " + formData.startTime);
-        const endDateTime = new Date(formData.endDate + " " + formData.endTime);
-    
-        if(!formData.startDate)
-        {
-            setErrorMessage("Please select start time");
-            return 0;
-        }
-        else if(!formData.endDate)
-        {
-            setErrorMessage("Please select end time");
-            return 0;
-        }
-        else if(endDateTime < startDateTime)
-        {
-            setErrorMessage("End time is NOT after start time. Please select another end time");
-            return 0;
-        }
-        else
-        {
-            setErrorMessage("");
-            return 1;
-        }
-    }
-
     const onSubmit = () => {
-        if(checkDateTime())
-        {
-            console.log(formData);
-        }
+        updateEvent(param.eventID,
+            {
+                name: formData.eventName,
+                description: formData.description,
+                maximumParticipants: formData.nrParticipants,
+                startTime: formData.startDateTime,
+                endTime: formData.endDateTime,
+                locationLat: formData.mapsLat,
+                locationLng: formData.mapsLng
+            }).then(function (response) {
+                console.log(response.status);
+            }).catch(function (error) {
+                console.log(error);
+        })
     }
 
     const tomorrow = dayjs().add(1, "day");
@@ -129,7 +144,7 @@ const CreateEvent = () => {
                     <Grid item className="grid-image">
                         <img src={cooking} alt=""/>
                         <Box className="box">
-                            <Typography pl={2} py={1} className="placeholder"><i>{formData.eventType}</i></Typography>
+                            <Typography pl={2} py={1} className="placeholder"><i>{eventTypeInfo.name}</i></Typography>
                         </Box>
                     </Grid>
                     <Timeline 
@@ -164,14 +179,16 @@ const CreateEvent = () => {
                                         <Box>
                                             <Typography>START</Typography>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <MobileDateTimePicker
-                                                    ampm={false}
-                                                    minDate={tomorrow}
-                                                    // defaultValue={new Date(formData.startDate + " " + formData.startTime)}
-                                                    onChange={(value) => {
-                                                        setFormData({...formData, startDate: value.format("YYYY-MM-DD"), startTime: value.format("HH:mm")})}
-                                                    } 
-                                                />
+                                                {formData.startDateTime && (
+                                                    <MobileDateTimePicker
+                                                        ampm={false}
+                                                        minDate={tomorrow}
+                                                        defaultValue={dayjs(formData.startDateTime)}
+                                                        onChange={(value) => {
+                                                            setFormData({...formData, startDateTime: format(new Date(value), "yyyy-MM-dd'T'HH:mm:ss.SSS")})}
+                                                        } 
+                                                    />
+                                                )}
                                             </LocalizationProvider>
                                         </Box>
                                     </Grid>
@@ -182,19 +199,18 @@ const CreateEvent = () => {
                                         <Box>
                                             <Typography>END</Typography>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <MobileDateTimePicker
-                                                    ampm={false}
-                                                    minDate={tomorrow}
-                                                    // defaultValue={new Date(formData.endDate + " " + formData.endTime)}
-                                                    onChange={(value) => {
-                                                        setFormData({...formData, endDate: value.format("YYYY-MM-DD"), endTime: value.format("HH:mm")})}
-                                                    }
-                                                />
+                                                {formData.endDateTime && (
+                                                    <MobileDateTimePicker
+                                                        ampm={false}
+                                                        minDate={tomorrow}
+                                                        defaultValue={dayjs(formData.endDateTime)}
+                                                        onChange={(value) => {
+                                                            setFormData({...formData, endDateTime: format(new Date(value), "yyyy-MM-dd'T'HH:mm:ss.SSS")})}
+                                                        }
+                                                    />
+                                                )}
                                             </LocalizationProvider>
                                         </Box>
-                                    </Grid>
-                                    <Grid item xs={12} pt={3}>
-                                        <Typography className="error">{errorMessage}</Typography>
                                     </Grid>
                                 </Grid>
                             </TimelineContent>
@@ -213,7 +229,8 @@ const CreateEvent = () => {
                                             {...register("nrParticipants")}
                                             name="nrParticipants"
                                             value={formData.nrParticipants}
-                                            onChange={handleChange}
+                                            onChange={(event) => {
+                                                setFormData({...formData, nrParticipants: parseInt(event.target.value, 10)})}}
                                             required
                                             placeholder="Type the number"
                                             type="number"
@@ -267,9 +284,16 @@ const CreateEvent = () => {
                                                 onKeyDown={(e) => {
                                                     if (e.key === "Enter") {
                                                         e.preventDefault();
-                                                        if (marker && autocomplete && autocomplete.getPlace()) {
-                                                        marker.setPosition(autocomplete.getPlace().geometry.location);
-                                                        map.panTo(autocomplete.getPlace().geometry.location);
+                                                        if (marker && autocomplete && autocomplete.getPlace())
+                                                        {
+                                                            marker.setPosition(autocomplete.getPlace().geometry.location);
+                                                            map.panTo(autocomplete.getPlace().geometry.location);
+                                                            const latLng = marker.getPosition();
+                                                            setFormData((prevFormData) => ({
+                                                                ...prevFormData,
+                                                                mapsLat: latLng.lat(),
+                                                                mapsLng: latLng.lng()
+                                                            }));
                                                         }
                                                     }
                                                     }}
@@ -278,27 +302,39 @@ const CreateEvent = () => {
                                         </GoogleAutocomplete>
                                     </Box>
 
-                                    <GoogleMap
-                                        center={storedMapCenter}
-                                        zoom={15}
-                                        mapContainerStyle={{width: "100%", height: "600px"}}
-                                        onLoad={(map) => setMap(map)}
-                                    >
-                                        <Grid item height="50px" position="relative" sx={{mt: 10}}>
-                                            <Box position="absolute" bottom="0px" left="0px">
-                                                <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(storedMapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
-                                            </Box>
-                                        </Grid>
-                                        
-                                        <MarkerF position={storedMapCenter} onLoad={(marker) => setMarker(marker)}/>
-                                    </GoogleMap>
+                                    {storedMapCenter.lat && storedMapCenter.lng && (
+                                        <GoogleMap
+                                            center={storedMapCenter}
+                                            zoom={15}
+                                            mapContainerStyle={{width: "100%", height: "600px"}}
+                                            onLoad={(map) => setMap(map)}
+                                        >
+                                            <Grid item height="50px" position="relative" sx={{mt: 10}}>
+                                                <Box position="absolute" bottom="0px" left="0px">
+                                                    <Button variant="contained" sx={{left: "8%", backgroundColor: "white", color: "black", "&:hover":{backgroundColor: '#FBFBFB'}, pl: 1, pr: 2}} onClick={() => map.panTo(storedMapCenter)}><NearMeIcon sx={{mr: 1}}/>Recenter</Button>
+                                                </Box>
+                                            </Grid>
+                                            
+                                            <MarkerF
+                                                position={storedMapCenter}
+                                                onLoad={(marker) => {
+                                                    setMarker(marker);
+                                                    setFormData((prevFormData) => ({
+                                                        ...prevFormData,
+                                                        mapsLat: storedMapCenter.lat,
+                                                        mapsLng: storedMapCenter.lng
+                                                    }));
+                                                }}
+                                            />
+                                        </GoogleMap>
+                                    )}
                                 </Grid>
                             </TimelineContent>
                         </TimelineItem>
                     </Timeline>
                     <Grid item pr={5}>
                         <Box display="flex" justifyContent="flex-end">
-                            <Button type="submit" variant="contained">CREATE EVENT</Button>
+                            <Button type="submit" variant="contained">SAVE EVENT</Button>
                         </Box>
                     </Grid>
                 </Paper>
