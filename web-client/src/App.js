@@ -20,7 +20,7 @@ function App() {
           <Route exact path="/feed" element={<Feed/>}/>
           <Route exact path="/event/:eventID" element={<EventPage/>}/>
           <Route exact path="/create-event" element={<CreateEvent/>}/>
-          <Route exact path="/edit-event" element={<EditEvent/>}/>
+          <Route exact path="/edit-event/:eventID" element={<EditEvent/>}/>
           <Route exact path="/profile-page" element={<ProfilePage/>}/>
           <Route exact path="/edit-profile" element={<EditProfile/>}/>
           <Route exact path="/change-password" element={<ChangePassword/>}/>
