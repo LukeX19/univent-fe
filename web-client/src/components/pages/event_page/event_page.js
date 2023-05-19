@@ -4,7 +4,6 @@ import { Box, Button, Grid, Slide, Paper, Typography, Dialog, DialogContent, Dia
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
-import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import NearMeIcon from '@mui/icons-material/NearMe';
@@ -12,15 +11,9 @@ import { deepOrange } from '@mui/material/colors';
 import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
 import { useParams } from "react-router-dom";
 import cooking from "../../images/cooking.png";
-import girl from "../../images/girl.jpg";
-import maps from "../../images/maps.jpg";
-import { getEventById, getEventTypeById, getUserProfileById } from '../../../api/index.js';
+import { getEventById, getEventTypeById, getUserProfileById, getParticipantsByEventId, getAverageRatingById } from '../../../api/index.js';
 import { format } from "date-fns";
 import "../event_page/event_page.css";
-
-// const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592}
-// localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
-// const storedMapCenter = JSON.parse(localStorage.getItem('mapCenter'));
 
 const EventPage = () => {
     const param = useParams();
@@ -28,23 +21,57 @@ const EventPage = () => {
     const [eventInfo, setEventInfo] = useState({});
     const [eventTypeInfo, setEventTypeInfo] = useState({});
     const [userInfo, setUserInfo] = useState({});
+    const [ratingInfo, setRatingInfo] = useState({ value: 0 });
     useEffect(() => {
         getEventById(param.eventID)
-            .then(function (response) {
-                setEventInfo(response.data);
-                return getEventTypeById(response.data.eventTypeID)
-                    .then(function (eventTypeResponse) {
-                        setEventTypeInfo(eventTypeResponse.data);
-                        return getUserProfileById(response.data.userProfileID);
-                    })
-                    .then(function (userProfileResponse) {
-                        setUserInfo(userProfileResponse.data.basicInfo);
-                    });
-            })
-            .catch(function (error) {
+          .then(function (response) {
+            setEventInfo(response.data);
+            return Promise.all([
+              getEventTypeById(response.data.eventTypeID),
+              getUserProfileById(response.data.userProfileID),
+              getAverageRatingById(response.data.userProfileID)
+            ]);
+          })
+          .then(function ([eventTypeResponse, userProfileResponse, ratingResponse]) {
+            setEventTypeInfo(eventTypeResponse.data);
+            setUserInfo(userProfileResponse.data.basicInfo);
+            setRatingInfo(ratingResponse.data);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }, [param.eventID]);
+
+    const [participantsList, setParticipantsList] = useState([]);
+    const [participantsNumber, setParticipantsNumber] = useState(0);
+    useEffect(() => {
+        getParticipantsByEventId(param.eventID)
+          .then(function (response) {
+            setParticipantsList(response.data);
+            setParticipantsNumber(response.data.length);
+      
+            // Create an array of promises for fetching ratings
+            const ratingPromises = response.data.map((participant) =>
+              getAverageRatingById(participant.userProfileID)
+            );
+      
+            // Fetch all ratings and update participantsList
+            Promise.all(ratingPromises)
+              .then((ratingResponses) => {
+                const updatedParticipants = response.data.map((participant, index) => ({
+                  ...participant,
+                  rating: ratingResponses[index].data.value,
+                }));
+                setParticipantsList(updatedParticipants);
+              })
+              .catch(function (error) {
                 console.log(error);
-            });
-    }, [param.eventID]);
+              });
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }, [param.eventID]);
 
     const formattedStartDate = eventInfo.startTime ? 
         format(new Date(eventInfo.startTime), "dd.MM.yyyy 'at' HH:mm")
@@ -57,17 +84,11 @@ const EventPage = () => {
         lat: parseFloat(eventInfo.locationLat),
         lng: parseFloat(eventInfo.locationLng)
     };
-    // const storedMapCenter = {
-    //     lat: !isNaN(parseFloat(eventInfo.locationLat)) ? parseFloat(eventInfo.locationLat) : 0,
-    //     lng: !isNaN(parseFloat(eventInfo.locationLng)) ? parseFloat(eventInfo.locationLng) : 0
-    // };
 
     const [open, setOpen] = useState(false);
-
     const handleOpen = () => {
         setOpen(true);
     }
-
     const handleClose = () => {
         setOpen(false);
     }
@@ -166,7 +187,7 @@ const EventPage = () => {
                                 </Grid>
                                 <Grid item px={2}>
                                     <Typography>{userInfo.firstName} {userInfo.lastName}</Typography>
-                                    <Rating readOnly precision={0.5} value={4.5}/>
+                                    <Rating readOnly precision={0.1} value={ratingInfo.value}/>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -175,7 +196,7 @@ const EventPage = () => {
                             <Grid container>
                                 {eventInfo.startTime && (
                                     [
-                                        {icon: <Diversity3Icon className="icon"/>, text: `3/${eventInfo.maximumParticipants} Participants Joined`},
+                                        {icon: <Diversity3Icon className="icon"/>, text: `${participantsNumber}/${eventInfo.maximumParticipants} Participants Joined`},
                                         {icon: <EventAvailableIcon className="icon"/>, text: formattedStartDate},
                                         {icon: <EventBusyIcon className="icon"/>, text: formattedEndTime}
                                         //{icon: <AccessTimeIcon className="icon"/>, text: formattedStartTime},
@@ -198,7 +219,7 @@ const EventPage = () => {
                         <Typography pb={2} variant="h6">Location on the map</Typography>
                         <Divider />
                         <Box py={2}>
-                            {eventInfo.locationLat && eventInfo.locationLng && (
+                            { eventInfo.locationLat && eventInfo.locationLng && (
                                 <GoogleMap
                                     center={storedMapCenter}
                                     zoom={15}
@@ -238,19 +259,34 @@ const EventPage = () => {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent className="dialog-content" dividers={true}>
-                    {participants.map((participant, index) => {
-                        return(
-                            <Grid container py={2} className="participant-container" key={index}>
-                                <Grid item mr={1.5}>
-                                    <Avatar alt="avatar" src={participant.image}>{participant.lastname.charAt(0)}{participant.firstname.charAt(0)}</Avatar>
-                                </Grid>
-                                <Grid item>
-                                    <Typography>{participant.lastname} {participant.firstname}</Typography>
-                                    <Rating readOnly precision={0.5} value={participant.rating}/>
-                                </Grid>
-                            </Grid>
+                    { participantsList.length === 0 ?
+                        (
+                            <Typography style={{ textAlign: 'center' }}>No participants enrolled in this event yet.</Typography>
                         )
-                    })}
+                        :
+                        (
+                            participantsList.map((participant, index) => (
+                                <Grid container py={2} className="participant-container" key={index}>
+                                    <Grid item mr={1.5}>
+                                    { participant.basicInfo.profilePicture !== "" ? (
+                                        <Avatar src={participant.basicInfo.profilePicture} />
+                                    )
+                                    :
+                                    (
+                                        <Avatar sx={{ bgcolor: deepOrange[500], "&:hover": { bgcolor: deepOrange[900] } }}>
+                                            {participant.basicInfo.lastName.charAt(0)}
+                                            {participant.basicInfo.firstName.charAt(0)}
+                                        </Avatar>
+                                    )}
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography>{participant.basicInfo.lastName} {participant.basicInfo.firstName}</Typography>
+                                        <Rating readOnly precision={0.1} value={participant.rating}/>
+                                    </Grid>
+                                </Grid>
+                            ))
+                        )
+                    }
                 </DialogContent>
             </Dialog> 
         </>

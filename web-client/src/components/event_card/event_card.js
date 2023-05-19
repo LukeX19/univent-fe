@@ -3,7 +3,7 @@ import "../event_card/event_card.css";
 import { Avatar, Box, Button, Grid, Paper, Rating, Typography } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
 import cooking from "../images/cooking.png";
-import { getEventTypeById, getUserProfileById } from "../../api";
+import { getEventTypeById, getUserProfileById, getParticipantsByEventId, getAverageRatingById } from "../../api";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
@@ -14,7 +14,6 @@ const EventCard = ({ event }) => {
   
     const [eventType, setEventType] = useState("");
     const [eventTypeLoading, setEventTypeLoading] = useState(true);
-  
     useEffect(() => {
       getEventTypeById(event.eventTypeID)
         .then(function (response) {
@@ -28,17 +27,33 @@ const EventCard = ({ event }) => {
   
     const [userAuthor, setUserAuthor] = useState({});
     const [userAuthorLoading, setUserAuthorLoading] = useState(true);
-  
+    const [ratingInfo, setRatingInfo] = useState({ value: 0 });
     useEffect(() => {
       getUserProfileById(event.userProfileID)
         .then(function (response) {
           setUserAuthor(response.data.basicInfo);
           setUserAuthorLoading(false);
+
+          return getAverageRatingById(event.userProfileID)
+        })
+        .then(function (ratingResponse) {
+            setRatingInfo(ratingResponse.data);
         })
         .catch(function (error) {
           console.log(error);
         });
     }, [event.userProfileID]);
+
+    const [participantsNumber, setParticipantsNumber] = useState(0);
+    useEffect(() => {
+        getParticipantsByEventId(event.eventID)
+          .then(function (response) {
+            setParticipantsNumber(response.data.length);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }, []);
   
     return (
         <Grid container className="container-event-card">
@@ -47,24 +62,26 @@ const EventCard = ({ event }) => {
                     <Grid item xs={12} md={4} className="grid-image">
                         <img src={cooking} width="100%" height="100%"/>
                         <Box className="box">
-                            {eventTypeLoading ? (
-                                <Typography pl={2} py={2} className="placeholder">
-                                    Loading...
-                                </Typography>
-                            )
-                            :
-                            (
-                                <Typography pl={2} py={2} className="placeholder">
-                                    {eventType}
-                                </Typography>
-                            )}
+                            { eventTypeLoading ?
+                                (
+                                    <Typography pl={2} py={2} className="placeholder">
+                                        Loading...
+                                    </Typography>
+                                )
+                                :
+                                (
+                                    <Typography pl={2} py={2} className="placeholder">
+                                        {eventType}
+                                    </Typography>
+                                )
+                            }
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={8}>
                         <Grid container>
                             <Grid item xs={12} sm={12} md={7} py={2} textAlign="center">
                                 <Typography variant="h5">{event.name}</Typography>
-                                <Typography>7/{event.maximumParticipants} Participants Joined</Typography>
+                                <Typography>{participantsNumber}/{event.maximumParticipants} Participants Joined</Typography>
                             </Grid>
                             <Grid item xs={12} md={5} py={3} textAlign="center">
                                 <Typography>{formattedStartTime}</Typography>
@@ -75,8 +92,7 @@ const EventCard = ({ event }) => {
                                         <Typography>Created by</Typography>
                                     </Grid>
                                     <Grid item xs={2}>
-                                        {
-                                            userAuthor.profilePicture !== "" ?
+                                        { userAuthor.profilePicture !== "" ?
                                             (
                                                 <Avatar src={userAuthor.profilePicture}/>
                                             )
@@ -91,7 +107,7 @@ const EventCard = ({ event }) => {
                                     </Grid>
                                     <Grid item xs={10}>
                                         <Typography>{userAuthor.lastName} {userAuthor.firstName}</Typography>
-                                        <Rating readOnly precision={0.5} value={4}/>
+                                        <Rating readOnly precision={0.1} value={ratingInfo.value}/>
                                     </Grid>
                                 </Grid>
                             </Grid>
