@@ -40,6 +40,7 @@ export const deleteEventType = (id) => apiWithToken().delete(`api/v1/EventTypes/
 //Events
 export const getAllEvents = () => apiWithToken().get("api/v1/Events");
 export const getEventById = (id) => apiWithToken().get(`api/v1/Events/${id}`);
+export const getEventsByUserId = (id) => apiWithToken().get(`api/v1/Events/User/${id}`);
 export const addEvent = (formData) => apiWithToken().post("api/v1/Events", formData);
 export const updateEvent = (id, formData) => apiWithToken().patch(`api/v1/Events/${id}`, formData);
 export const cancelEvent = (id, formData) => apiWithToken().patch(`api/v1/Events/${id}/CancelEvent`, formData);
@@ -56,5 +57,6 @@ export const deleteEventParticipant = (idEvent) => apiWithToken().delete(`api/v1
 //Ratings
 export const getAllRatings = () => apiWithToken().get("api/v1/Ratings");
 export const getRatingById = (id) => apiWithToken().get(`api/v1/Ratings/${id}`);
+export const getAverageRatingById = (id) => apiWithToken().get(`api/v1/Ratings/User/${id}/Average`);
 export const addRating = (formData) => apiWithToken().post("api/v1/Ratings", formData);
 export const deleteRating = (id) => apiWithToken().delete(`api/v1/Ratings/${id}`);
