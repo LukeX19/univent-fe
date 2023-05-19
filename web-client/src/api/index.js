@@ -49,7 +49,7 @@ export const deleteEvent = (id) => apiWithToken().delete(`api/v1/Events/${id}`);
 //EventParticipants
 export const getAllEventParticipantCombinations = () => apiWithToken().get("api/v1/EventParticipant");
 // export const getEventParticipantByBothIds = (idEvent, idUser) => apiWithToken.get(`api/v1/EventParticipant/Event/${idEvent}/User/${idUser}`);
-export const getEventParticipantsByEventId = (idEvent) => apiWithToken().get(`api/v1/EventParticipant/Event/${idEvent}/Participants`);
+export const getParticipantsByEventId = (idEvent) => apiWithToken().get(`api/v1/EventParticipant/Event/${idEvent}/Participants`);
 export const getEventsByParticipantId = (idUser) => apiWithToken().get(`api/v1/EventParticipant/User/${idUser}/EnrolledEvents`);
 export const addEventParticipant = (formData) => apiWithToken().post("api/v1/EventParticipant", formData);
 export const deleteEventParticipant = (idEvent) => apiWithToken().delete(`api/v1/EventParticipant/Event/${idEvent}/Participants`);

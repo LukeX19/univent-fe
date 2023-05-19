@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react';
 import { Box, Button, Grid, Typography } from '@mui/material';
-import { getEventTypeById } from "../../api";
+import { getEventTypeById, getParticipantsByEventId } from "../../api";
 import { format } from "date-fns";
 import '../event_card_hosted/event_card_hosted.css';
 import cooking from '../images/cooking.png'
@@ -11,7 +11,6 @@ const EventCardHosted = ({ hostedEvent }) => {
 
     const [eventType, setEventType] = useState("");
     const [eventTypeLoading, setEventTypeLoading] = useState(true);
-
     useEffect(() => {
         getEventTypeById(hostedEvent.eventTypeID)
           .then(function (response) {
@@ -22,6 +21,17 @@ const EventCardHosted = ({ hostedEvent }) => {
             console.log(error);
           });
     }, [hostedEvent.eventTypeID]);
+
+    const [participantsNumber, setParticipantsNumber] = useState(0);
+    useEffect(() => {
+        getParticipantsByEventId(hostedEvent.eventID)
+          .then(function (response) {
+            setParticipantsNumber(response.data.length);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }, []);
 
     return(
         <Grid container pt={3} className="container-card-hosted">
@@ -45,7 +55,7 @@ const EventCardHosted = ({ hostedEvent }) => {
                 <Grid container>
                     <Grid item xs={12} sm={12} md={12} py={2} textAlign="center">
                         <Typography variant="h5">{hostedEvent.name}</Typography>
-                        <Typography>7/{hostedEvent.maximumParticipants} Participants Joined</Typography>
+                        <Typography>{participantsNumber}/{hostedEvent.maximumParticipants} Participants Joined</Typography>
                     </Grid>
                     <Grid item xs={12} md={12} py={2} textAlign="center">
                         <Typography>Starts on {formattedStartTime}</Typography>

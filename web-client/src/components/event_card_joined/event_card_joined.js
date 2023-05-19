@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react';
 import { Box, Button, Grid, Typography } from '@mui/material';
-import { getEventTypeById, getUserProfileById } from "../../api";
+import { getEventTypeById, getParticipantsByEventId, getUserProfileById } from "../../api";
 import { format } from "date-fns";
 import '../event_card_joined/event_card_joined.css';
 import cooking from '../images/cooking.png'
@@ -10,7 +10,6 @@ const EventCardJoined = ({ joinedEvent }) => {
 
     const [eventType, setEventType] = useState("");
     const [eventTypeLoading, setEventTypeLoading] = useState(true);
-
     useEffect(() => {
         getEventTypeById(joinedEvent.eventTypeID)
           .then(function (response) {
@@ -22,8 +21,18 @@ const EventCardJoined = ({ joinedEvent }) => {
           });
     }, [joinedEvent.eventTypeID]);
 
+    const [participantsNumber, setParticipantsNumber] = useState(0);
+    useEffect(() => {
+        getParticipantsByEventId(joinedEvent.eventID)
+          .then(function (response) {
+            setParticipantsNumber(response.data.length);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }, []);
+
     const [userAuthor, setUserAuthor] = useState({});
-  
     useEffect(() => {
       getUserProfileById(joinedEvent.userProfileID)
         .then(function (response) {
@@ -56,7 +65,7 @@ const EventCardJoined = ({ joinedEvent }) => {
                 <Grid container>
                     <Grid item xs={12} sm={12} md={12} py={2} textAlign="center">
                         <Typography variant="h5">{joinedEvent.name}</Typography>
-                        <Typography>7/{joinedEvent.maximumParticipants} Participants Joined</Typography>
+                        <Typography>{participantsNumber}/{joinedEvent.maximumParticipants} Participants Joined</Typography>
                     </Grid>
                     <Grid item xs={12} md={12} py={2} textAlign="center">
                         <Typography>Starts on {formattedStartTime}</Typography>
