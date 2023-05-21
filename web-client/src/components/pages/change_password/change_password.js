@@ -1,17 +1,20 @@
-import { React, useState } from 'react';
-import { Box, Button, Grid, Paper, Typography, TextField, IconButton, InputAdornment } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import YupPassword from 'yup-password';
-import { yupResolver } from '@hookform/resolvers/yup';
-import NavbarLoggedIn from '../../navbar_logged/navbar_logged.js';
-import '../change_password/change_password.css';
+import { React, useState } from "react";
+import { Box, Button, Grid, Paper, Typography, TextField, IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import * as yup from "yup";
+import YupPassword from "yup-password";
+import { yupResolver } from "@hookform/resolvers/yup";
+import NavbarLoggedIn from "../../navbar_logged/navbar_logged.js";
+import { changePassword } from "../../../api/index.js";
+import "../change_password/change_password.css";
 YupPassword(yup)
 
 const initialState = {oldPassword: "", newPassword: "", confirmPassword: ""};
 
 const ChangePassword = () => {
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState(initialState);
     
@@ -41,10 +44,6 @@ const ChangePassword = () => {
         resolver: yupResolver(schema)
     });
 
-    const onSubmit = () => {
-        console.log(formData);
-    }
-
     const checkPassword = () => {
         return {
             length: formData.newPassword.length >= 8,
@@ -56,6 +55,19 @@ const ChangePassword = () => {
     };
 
     const requirements = checkPassword();
+
+    const onSubmit = () => {
+        console.log(formData);
+        changePassword({
+            oldPassword: formData.oldPassword,
+            newPassword: formData.newPassword
+        }).then(function (response) {
+            navigate("/feed");
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    }
     
     return(
         <>
