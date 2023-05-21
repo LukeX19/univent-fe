@@ -16,6 +16,7 @@ export const apiWithToken = () => {
 //Identity
 export const login = (formData) => api.post("api/v1/Identity/Login", formData);
 export const register = (formData) => api.post("api/v1/Identity/Registration", formData);
+export const changePassword = (formData) => apiWithToken().patch("api/v1/Identity/ChangePassword", formData);
 
 //UserProfiles
 export const getAllUserProfiles = () => apiWithToken().get("api/v1/UserProfiles");
