@@ -208,7 +208,9 @@ const EventPage = () => {
                     <Grid item xs={12}>
                         <Box display="flex" justifyContent="flex-end">
                             <Button variant="contained" onClick={handleOpen} sx={{mr: 2, background: "#8FBDD3"}}>CHECK ENROLLED PARTICIPANTS</Button>
-                            { !(creatorID === decoded_token.UserProfileId) && !participantsList.some(participant => participant.userProfileID === decoded_token.UserProfileId) &&
+                            { (participantsNumber < eventInfo.maximumParticipants) &&
+                              !(creatorID === decoded_token.UserProfileId) &&
+                              !participantsList.some(participant => participant.userProfileID === decoded_token.UserProfileId) &&
                                 <Button variant="contained" onClick={enrollInEvent}>JOIN EVENT</Button>
                             }
                         </Box>
