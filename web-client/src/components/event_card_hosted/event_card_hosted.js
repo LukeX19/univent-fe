@@ -1,11 +1,14 @@
-import { React, useState, useEffect } from 'react';
-import { Box, Button, Grid, Typography } from '@mui/material';
-import { getEventTypeById, getParticipantsByEventId } from "../../api";
+import { React, useState, useEffect } from "react";
+import { Box, Button, Grid, Typography } from "@mui/material";
+import { getEventTypeById, getParticipantsByEventId, cancelEvent } from "../../api";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import '../event_card_hosted/event_card_hosted.css';
-import cooking from '../images/cooking.png'
+import "../event_card_hosted/event_card_hosted.css";
+import cooking from "../images/cooking.png";
 
 const EventCardHosted = ({ hostedEvent }) => {
+    const navigate = useNavigate();
+
     const formattedStartTime = format(new Date(hostedEvent.startTime), "dd.MM.yyyy 'at' HH:mm");
     const formattedCreatedDate = format(new Date(hostedEvent.createdDate), "dd.MM.yyyy");
 
@@ -32,6 +35,16 @@ const EventCardHosted = ({ hostedEvent }) => {
             console.log(error);
           });
     }, []);
+
+    const cancelCurrentEvent = (id) => {
+        cancelEvent(id)
+          .then(function (response) {
+            console.log(response.status);
+        })
+          .catch(function (error) {
+            console.log(error);
+        });
+    }
 
     return(
         <Grid container pt={3} className="container-card-hosted">
@@ -66,13 +79,13 @@ const EventCardHosted = ({ hostedEvent }) => {
                 </Grid>
             </Grid>
             <Grid item xs={12} md={2}>
-                <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button">
+                <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}`)}}>
                     <Button variant="contained" sx={{width: '150px'}}>VIEW</Button>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button">
+                <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}/edit`)}}>
                     <Button variant="contained" sx={{width: '150px'}}>EDIT</Button>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button">
+                <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {cancelCurrentEvent(hostedEvent.eventID)}}>
                     <Button variant="contained" sx={{width: '150px'}}>CANCEL</Button>
                 </Grid>
             </Grid>
