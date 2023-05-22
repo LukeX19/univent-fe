@@ -1,26 +1,30 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect } from "react";
 import NavbarLoggedIn from "../../navbar_logged/navbar_logged.js";
-import { Box, Button, Grid, Slide, Paper, Typography, Dialog, DialogContent, DialogTitle, Divider, Avatar, Rating } from '@mui/material';
-import Diversity3Icon from '@mui/icons-material/Diversity3';
-import EventAvailableIcon from '@mui/icons-material/EventAvailable';
-import EventBusyIcon from '@mui/icons-material/EventBusy';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import NearMeIcon from '@mui/icons-material/NearMe';
-import { deepOrange } from '@mui/material/colors';
+import { Box, Button, Grid, Slide, Paper, Typography, Dialog, DialogContent, DialogTitle, Divider, Avatar, Rating } from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import EventBusyIcon from "@mui/icons-material/EventBusy";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import NearMeIcon from "@mui/icons-material/NearMe";
+import { deepOrange } from "@mui/material/colors";
 import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
-import { useParams } from "react-router-dom";
 import cooking from "../../images/cooking.png";
-import { getEventById, getEventTypeById, getUserProfileById, getParticipantsByEventId, getAverageRatingById } from '../../../api/index.js';
+import { getEventById, getEventTypeById, getUserProfileById, getParticipantsByEventId, getAverageRatingById, addEventParticipant } from "../../../api/index.js";
 import { format } from "date-fns";
 import "../event_page/event_page.css";
 
 const EventPage = () => {
     const param = useParams();
+    const navigate = useNavigate();
+    const decoded_token = jwt_decode(localStorage.getItem("token"));
 
     const [eventInfo, setEventInfo] = useState({});
     const [eventTypeInfo, setEventTypeInfo] = useState({});
     const [userInfo, setUserInfo] = useState({});
+    const [creatorID, setCreatorID] = useState('');
     const [ratingInfo, setRatingInfo] = useState({ value: 0 });
     useEffect(() => {
         getEventById(param.eventID)
@@ -35,6 +39,7 @@ const EventPage = () => {
           .then(function ([eventTypeResponse, userProfileResponse, ratingResponse]) {
             setEventTypeInfo(eventTypeResponse.data);
             setUserInfo(userProfileResponse.data.basicInfo);
+            setCreatorID(userProfileResponse.data.userProfileID);
             setRatingInfo(ratingResponse.data);
           })
           .catch(function (error) {
@@ -93,50 +98,18 @@ const EventPage = () => {
         setOpen(false);
     }
 
-    const participants = [
-        {   
-            image: '',
-            lastname: "Chiara",
-            firstname: "Charlotte - Ava",
-            rating: 4.5
-        }, 
-        {   
-            image: '',
-            lastname: "Chiara",
-            firstname: "Charlotte - Ava",
-            rating: 4.5
-        }, 
-        {   
-            image: '',
-            lastname: "Chiara",
-            firstname: "Charlotte - Ava",
-            rating: 4.5
-        }, 
-        {   
-            image: '',
-            lastname: "Chiara",
-            firstname: "Charlotte - Ava",
-            rating: 2.5
-        }, 
-        {   
-            image: '',
-            lastname: "Chiara",
-            firstname: "Charlotte - Ava",
-            rating: 4.5
-        }, 
-        {   
-            image: '',
-            lastname: "Chiara",
-            firstname: "Charlotte - Ava",
-            rating: 1.5
-        }, 
-        {   
-            image: '',
-            lastname: "Chiara",
-            firstname: "Charlotte - Ava",
-            rating: 4.5
-        }, 
-    ];
+    const enrollInEvent = () => {
+        addEventParticipant({
+            eventID: param.eventID
+        })
+        .then(response => {
+            console.log(response.status);
+            navigate("/feed");
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API
@@ -155,14 +128,12 @@ const EventPage = () => {
             <NavbarLoggedIn/>
             <Grid container className="container-event-page">
                 <Paper elevation={0} className="paper">
-
                     <Grid item className="grid-image">
                         <img src={cooking} alt=""/>
                         <Box className="box">
                             <Typography pl={2} py={1} className="placeholder">{eventTypeInfo.name}</Typography>
                         </Box>
                     </Grid>
-
                     <Grid container my={2}>
                         <Grid item xs={12} md={8} py={2}>
                             <Typography py={1} fontSize="30px">{eventInfo.name}</Typography>
@@ -191,7 +162,6 @@ const EventPage = () => {
                                 </Grid>
                             </Grid>
                         </Grid>
-
                         <Grid item py={4} xs={12} md={4}>
                             <Grid container>
                                 {eventInfo.startTime && (
@@ -208,13 +178,11 @@ const EventPage = () => {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item my={3}>
                         <Typography pb={2} variant="h6">Description</Typography>
                         <Divider/>
                         <Typography py={2}>{eventInfo.description}</Typography>
                     </Grid>
-
                     <Grid item my={3}>
                         <Typography pb={2} variant="h6">Location on the map</Typography>
                         <Divider />
@@ -237,17 +205,12 @@ const EventPage = () => {
                             )}
                         </Box>
                     </Grid>
-
-                    {/* <Grid item xs={12} py={0}>
-                        <Box display='flex' justifyContent='flex-end'>
-                            <Button variant="contained" onClick={handleOpen} sx={{mr: 2, background: '#8FBDD3'}}>CHECK ENROLLED PARTICIPANTS</Button>
-                            <Button variant="contained">JOIN EVENT</Button>
-                        </Box>
-                    </Grid> */}
                     <Grid item xs={12}>
                         <Box display="flex" justifyContent="flex-end">
                             <Button variant="contained" onClick={handleOpen} sx={{mr: 2, background: "#8FBDD3"}}>CHECK ENROLLED PARTICIPANTS</Button>
-                            <Button variant="contained">JOIN EVENT</Button>
+                            { !(creatorID === decoded_token.UserProfileId) && !participantsList.some(participant => participant.userProfileID === decoded_token.UserProfileId) &&
+                                <Button variant="contained" onClick={enrollInEvent}>JOIN EVENT</Button>
+                            }
                         </Box>
                     </Grid>
                 </Paper>
