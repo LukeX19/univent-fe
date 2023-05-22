@@ -13,8 +13,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import NearMeIcon from '@mui/icons-material/NearMe';
 import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
 import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api";
-import { useParams } from "react-router-dom";
-import { getEventById, getEventTypeById, getUserProfileById, updateEvent } from '../../../api/index.js';
+import { useParams, useNavigate } from "react-router-dom";
+import { getEventById, getEventTypeById, getUserProfileById, updateEvent, getParticipantsByEventId } from '../../../api/index.js';
 import { format } from "date-fns";
 import maps from '../../images/maps.jpg';
 import cooking from '../../images/cooking.png';
@@ -55,6 +55,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const CreateEvent = () => {
     const param = useParams();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState(initialState);
 
@@ -83,13 +84,25 @@ const CreateEvent = () => {
             });
     }, [param.eventID]);
 
+    const [participantsNumber, setParticipantsNumber] = useState(1);
+    useEffect(() => {
+        getParticipantsByEventId(param.eventID)
+          .then(function (response) {
+            if(response.data.length > 0)
+                setParticipantsNumber(response.data.length);
+        })
+          .catch(function (error) {
+            console.log(error);
+        });
+    })
+
     const storedMapCenter = {
         lat: parseFloat(formData.mapsLat),
         lng: parseFloat(formData.mapsLng)
     };
 
     const schema = yup.object().shape({
-        nrParticipants: yup.number().positive().integer().min(1, "Number of participants must be greater than or equal to 1").max(100, "Number of participants must be less than or equal to 100"),
+        nrParticipants: yup.number().positive().integer().min(participantsNumber, `Number of participants must be greater than or equal to ${participantsNumber}`).max(25, "Number of participants must be less than or equal to 25"),
     });
 
     const {register, handleSubmit, formState: {errors}} = useForm({
