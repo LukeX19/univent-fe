@@ -20,9 +20,9 @@ function App() {
           <Route exact path="/feed" element={<Feed/>}/>
           <Route exact path="/event/:eventID" element={<EventPage/>}/>
           <Route exact path="/create-event" element={<CreateEvent/>}/>
-          <Route exact path="/edit-event/:eventID" element={<EditEvent/>}/>
+          <Route exact path="/event/:eventID/edit" element={<EditEvent/>}/>
           <Route exact path="/profile" element={<ProfilePage/>}/>
-          <Route exact path="/edit-profile" element={<EditProfile/>}/>
+          <Route exact path="/profile/edit" element={<EditProfile/>}/>
           <Route exact path="/change-password" element={<ChangePassword/>}/>
           <Route exact path="/event/:eventID/feedback" element={<FeedbackForm/>}/>
           <Route exact path="/signin" element={<Signin/>}/>
