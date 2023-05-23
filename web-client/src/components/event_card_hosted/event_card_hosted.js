@@ -101,7 +101,7 @@ const EventCardHosted = ({ hostedEvent }) => {
                 <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}`)}}>
                     <Button variant="contained" sx={{width: '150px'}}>VIEW</Button>
                 </Grid>
-                { !hostedEvent.isCancelled && (
+                { !hostedEvent.isCancelled && new Date(hostedEvent.endTime) > new Date() && (
                     <>
                     <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}/edit`)}}>
                         <Button variant="contained" sx={{width: '150px'}}>EDIT</Button>
