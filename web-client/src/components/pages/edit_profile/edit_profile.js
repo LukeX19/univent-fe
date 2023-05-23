@@ -64,7 +64,7 @@ const EditProfile = () => {
         email: yup.string().email("Please use a valid email address"),
         dateOfBirth: yup.string()
                         .test("dateOfBirth", "Age should be between 18 and 26", function (value) {
-                            const parsedDate = parse(value, 'MM-dd-yyyy', new Date());
+                            const parsedDate = parse(value, 'dd-MM-yyyy', new Date());
                             return differenceInYears(new Date(), parsedDate) >= 18 && differenceInYears(new Date(), parsedDate) <= 26;
                         }),
         hometown: yup.string().matches(/[a-zA-ZăâîșțĂÂÎȘȚ -]+$/, "Must be only letters")
@@ -105,7 +105,6 @@ const EditProfile = () => {
         })
     }
 
-    const universities = ["The Polytehnic University Timișoara", "West University Timișoara", "Victor Babes University of Medicine and Pharmacy Timișoara", "University of life sciences 'KING MIHAI I' Timișoara"];
     const years = [ 
         {value: 1, option: "I"}, 
         {value: 2, option: "II"},
