@@ -44,7 +44,6 @@ const StepOne = ({formData, setFormData, handleChange, handleNext}) => {
         handleNext();
     }
 
-    const universities = ["The Polytehnic University Timișoara", "West University Timișoara", "Victor Babes University of Medicine and Pharmacy Timișoara", "University of life sciences 'KING MIHAI I' Timișoara"];
     const years = [ 
         {value: 1, option: "I"}, 
         {value: 2, option: "II"},

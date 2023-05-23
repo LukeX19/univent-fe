@@ -1,19 +1,21 @@
-import { React, useState, useEffect } from 'react';
-import { AppBar, Avatar, Box, Button, Container, IconButton, ListItemIcon, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
-import { deepOrange } from '@mui/material/colors';
-import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { useNavigate } from 'react-router-dom';
+import { React, useState, useEffect } from "react";
+import { AppBar, Avatar, Box, Button, Container, IconButton, ListItemIcon, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
+import { deepOrange } from "@mui/material/colors";
+import MenuIcon from "@mui/icons-material/Menu";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import { getUserProfileById } from '../../api';
+import { getUserProfileById } from "../../api";
+import "./navbar_logged.css"
 
-const pages = ['Explore Events', 'Host a New Event', 'My Events'];
+const pages = [
+    {name: "Explore Events", link: "/feed"},
+    {name: "Host a New Event", link: "/create-event"}
+];
 const settings = [
-    {name: 'Profile', icon: <AccountCircleIcon/>},
-    {name: 'Account', icon: <SettingsIcon/>},
-    {name: 'Logout', icon: <LogoutIcon/>}
+    {name: "Profile", icon: <AccountCircleIcon/>, link: "/profile"},
+    {name: "Logout", icon: <LogoutIcon/>, link: "/"}
 ];
 
 function ResponsiveAppBar() {
@@ -36,6 +38,11 @@ function ResponsiveAppBar() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        navigate("/");
+      };
 
     const [userInfo, setUserInfo] = useState({});
     const decoded_token = jwt_decode(localStorage.getItem("token"));
@@ -62,13 +69,14 @@ function ResponsiveAppBar() {
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
+                        { pages.map((page, index) => (
                         <Button
-                            key={page}
-                            onClick={handleCloseNavMenu}
+                            key={index}
+                            onClick={() => {navigate(page.link)}}
+                            id = {window.location.pathname.match(page.link)? "active" : ""}
                             sx={{ px: 3, my: 2, color: 'black', display: 'block' }}
                         >
-                            {page}
+                            {page.name}
                         </Button>
                         ))}
                     </Box>
@@ -102,9 +110,9 @@ function ResponsiveAppBar() {
                             display: { xs: 'block', md: 'none' },
                         }}
                         >
-                        {pages.map((page) => (
-                            <MenuItem key={page} onClick={handleCloseNavMenu}>
-                            <Typography textAlign="center">{page}</Typography>
+                        { pages.map((page, index) => (
+                            <MenuItem key={index} onClick={() => {navigate(page.link)}}>
+                            <Typography textAlign="center">{page.name}</Typography>
                             </MenuItem>
                         ))}
                         </Menu>
@@ -150,11 +158,10 @@ function ResponsiveAppBar() {
                         open={Boolean(anchorElUser)}
                         onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting, index) => (
-                                <MenuItem key={index} onClick={handleCloseUserMenu}>
+                            { settings.map((setting, index) => (
+                                <MenuItem key={index} onClick={setting.name === "Logout" ? handleLogout : () => navigate(setting.link)}>
                                     <ListItemIcon>{setting.icon}</ListItemIcon>
-                                    
-                                    <Typography textAlign="center" sx={{ px: 1 }}>{setting.name}</Typography>
+                                    <Typography textAlign="center">{setting.name}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>

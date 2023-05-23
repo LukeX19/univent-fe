@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
-import { Box, Button, Grid, Paper, Typography, TextField, Avatar, Autocomplete, Badge, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Button, Grid, Paper, Typography, TextField, Avatar, Badge, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -19,6 +20,8 @@ import "../edit_profile/edit_profile.css";
 const initialState = {firstname: "", lastname: "", university: "", year: 1, phoneNumber: "", email: "", dateOfBirth: null, hometown: "", avatar: ''};
 
 const EditProfile = () => {
+    const navigate = useNavigate();
+
     const [universitiesInfo, setUniversities] = useState([]);
     useEffect(() => {
         getAllUniversities().then(function (response) {
@@ -100,20 +103,21 @@ const EditProfile = () => {
                 profilePicture: formData.avatar
             }).then(function (response) {
                 console.log(response.status);
+                navigate("/profile");
             }).catch(function (error) {
                 console.log(error);
         })
     }
 
     const years = [ 
-        {value: 1, option: "I"}, 
+        {value: 1, option: "I"},
         {value: 2, option: "II"},
-        {value: 3, option: "III"}, 
-        {value: 4, option: "IV"}, 
-        {value: 5, option: "V"}, 
-        {value: 6, option: "VI"}, 
-        {value: 7, option: "I Master"}, 
-        {value: 8, option: "II Master"} 
+        {value: 3, option: "III"},
+        {value: 4, option: "IV"},
+        {value: 5, option: "V"},
+        {value: 6, option: "VI"},
+        {value: 7, option: "I Master"},
+        {value: 8, option: "II Master"}
     ];
 
     return(

@@ -62,7 +62,7 @@ const ChangePassword = () => {
             oldPassword: formData.oldPassword,
             newPassword: formData.newPassword
         }).then(function (response) {
-            navigate("/feed");
+            navigate("/profile");
         })
         .catch(function (error) {
             console.log(error);

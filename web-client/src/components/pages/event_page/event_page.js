@@ -16,6 +16,8 @@ import { getEventById, getEventTypeById, getUserProfileById, getParticipantsByEv
 import { format } from "date-fns";
 import "../event_page/event_page.css";
 
+const libraries = ['places'];
+
 const EventPage = () => {
     const param = useParams();
     const navigate = useNavigate();
@@ -112,8 +114,9 @@ const EventPage = () => {
     }
 
     const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API
-    })
+        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API,
+        libraries: libraries
+    });
 
     const[map, setMap] = useState(/** @type google.maps.Map */ (null));
 
