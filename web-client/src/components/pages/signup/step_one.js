@@ -30,7 +30,7 @@ const StepOne = ({formData, setFormData, handleChange, handleNext}) => {
         phoneNumber: yup.string().matches(/^\+?\d{10,14}$/, "Invalid phone number format"),
         dateOfBirth: yup.string()
                         .test("dateOfBirth", "Age should be between 18 and 26", function (value) {
-                            const parsedDate = parse(value, 'MM-dd-yyyy', new Date());
+                            const parsedDate = parse(value, 'dd-MM-yyyy', new Date());
                             return differenceInYears(new Date(), parsedDate) >= 18 && differenceInYears(new Date(), parsedDate) <= 26;
                         }),
         hometown: yup.string().matches(/[a-zA-ZăâîșțĂÂÎȘȚ -]+$/, "Must be only letters")
