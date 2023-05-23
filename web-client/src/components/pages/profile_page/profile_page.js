@@ -1,21 +1,25 @@
 import { React, useState, useEffect } from 'react';
-import { Button, Tab, Tabs, Box, Rating, Avatar, Grid, Typography } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Tab, Tabs, Box, Rating, Avatar, Grid, Typography } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 import { deepOrange } from '@mui/material/colors';
 import IconButton from '@mui/material/IconButton';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import NavbarLoggedIn from '../../navbar_logged/navbar_logged.js';
 import EventCardHosted from '../../event_card_hosted/event_card_hosted.js';
 import EventCardJoined from '../../event_card_joined/event_card_joined.js';
 import jwt_decode from "jwt-decode";
-import { getUserProfileById, getUniversityById, getAverageRatingById, getEventsByUserId, getEventsByParticipantId } from "../../../api/index.js";
+import { getUserProfileById, getUniversityById, getAverageRatingById, getEventsByUserId, getEventsByParticipantId, deleteUserProfile } from "../../../api/index.js";
 import { format } from "date-fns";
 import girl from '../../images/girl.jpg';
 import '../profile_page/profile_page.css';
 
 const ProfilePage = () => {
+    const navigate = useNavigate();
+
     const decoded_token = jwt_decode(localStorage.getItem("token"));
     const [userInfo, setUserInfo] = useState({});
     const [universityInfo, setUniversityInfo] = useState({});
@@ -74,77 +78,24 @@ const ProfilePage = () => {
         setIsOpen(!isOpen);
     };
 
-    // const hostedEvents = [
-    //     {   
-    //         title: 'Taste - Tastic “I Can Cook”',
-    //         image: '',
-    //         enrolled_participants: 3,
-    //         total_participants: 6,
-    //         date: "28 Oct. 2023",
-    //         time: "16:00",
-    //         address: "Victory Square, Timișoara",
-    //         date_created: "12 Oct. 2022"
-    //     }, 
-    //     {   
-    //         title: 'Taste - Tastic “I Can Cook”',
-    //         image: '',
-    //         enrolled_participants: 3,
-    //         total_participants: 6,
-    //         date: "28 Oct. 2023",
-    //         time: "16:00",
-    //         address: "Victory Square, Timișoara",
-    //         date_created: "12 Oct. 2022"
-    //     }, 
-    //     {   
-    //         title: 'Taste - Tastic “I Can Cook”',
-    //         image: '',
-    //         enrolled_participants: 3,
-    //         total_participants: 6,
-    //         date: "28 Oct. 2023",
-    //         time: "16:00",
-    //         address: "Victory Square, Timișoara",
-    //         date_created: "12 Oct. 2022"
-    //     }
-    // ];
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => {
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    };
 
-    // const joinedEvents = [
-    //     {   
-    //         title: 'Taste - Tastic “I Can Cook”',
-    //         image: '',
-    //         enrolled_participants: 3,
-    //         total_participants: 6,
-    //         date: "28 Oct. 2023",
-    //         time: "16:00",
-    //         address: "Victory Square, Timișoara",
-    //         author_lastname: "Chiara",
-    //         author_firstname: "Charlotte - Ava",
-    //         rating: 2.5
-    //     }, 
-    //     {   
-    //         title: 'Taste - Tastic “I Can Cook”',
-    //         image: '',
-    //         enrolled_participants: 3,
-    //         total_participants: 6,
-    //         date: "28 Oct. 2023",
-    //         time: "16:00",
-    //         address: "Victory Square, Timișoara",
-    //         author_lastname: "Chiara",
-    //         author_firstname: "Charlotte - Ava",
-    //         rating: 2.5
-    //     }, 
-    //     {   
-    //         title: 'Taste - Tastic “I Can Cook”',
-    //         image: '',
-    //         enrolled_participants: 3,
-    //         total_participants: 6,
-    //         date: "28 Oct. 2023",
-    //         time: "16:00",
-    //         address: "Victory Square, Timișoara",
-    //         author_lastname: "Chiara",
-    //         author_firstname: "Charlotte - Ava",
-    //         rating: 2.5
-    //     }, 
-    // ];
+    const deleteAccount = () => {
+        deleteUserProfile(decoded_token.UserProfileId)
+        .then(function (response) {
+            console.log(response.status);
+            navigate("/");
+        })
+          .catch(function (error) {
+            console.log(error);
+        });
+    }
 
     return(
         <>
@@ -174,7 +125,8 @@ const ProfilePage = () => {
                             <Box className="box" sx={{position: {xs: 'none', md: 'absolute'}, pl: 2}}>
                                 <Box py={1} className="info">
                                     <Typography variant="h5">{userInfo.lastName} {userInfo.firstName}</Typography>
-                                    <EditIcon className="edit-icon"/> 
+                                    <EditIcon className="edit-icon" onClick={() => {navigate("/profile/edit")}}/>
+                                    <VpnKeyIcon className="key-icon" onClick={() => {navigate("/profile/change-password")}}/>
                                 </Box>
                                 <Typography><AccountBalanceIcon className="university-icon"/>{universityInfo.name}, Year: {yearInfo.toString()}</Typography>
                                 <Box className="info">
@@ -182,7 +134,8 @@ const ProfilePage = () => {
                                     <Typography mr={1}>{ratingInfo.value}</Typography>
                                     <Rating readOnly precision={0.1} value={ratingInfo.value}/>
                                 </Box>
-                                <Typography sx={{fontSize: '15px', color: 'grey'}}>Joined on {formattedJoinedDate}</Typography>
+                                <Typography pt={1} sx={{fontSize: '15px', color: 'grey'}}>Joined on {formattedJoinedDate}</Typography>
+                                <Typography sx={{fontSize: '15px', color: 'red'}}><span style={{ cursor: 'pointer' }} onClick={handleOpen}>Delete Account</span></Typography>
                             </Box>
                         </Grid>
                     </Grid>
@@ -220,6 +173,20 @@ const ProfilePage = () => {
                 }                               
             </Grid>
         </Grid>
+        <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>{"Warning!"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Are you sure you want to delete your account?
+                    <br/>
+                    This action can not be undone.
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button sx={{background: 'red', color: '#FBFBFB', "&:hover": {background: '#FFB84C'}}} onClick={() => {deleteAccount()}}>Delete</Button>
+                <Button onClick={handleClose}>Cancel</Button>
+            </DialogActions>
+        </Dialog>
         </>
     )
 }
