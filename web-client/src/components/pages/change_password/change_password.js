@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import { Box, Button, Grid, Paper, Typography, TextField, IconButton, InputAdornment } from "@mui/material";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Paper, Typography, TextField, IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -56,8 +56,19 @@ const ChangePassword = () => {
 
     const requirements = checkPassword();
 
+    const [confirmAlertOpen, setConfirmAlertOpen] = useState(false);
+    const handleConfirmAlertOpen = () => {
+        setConfirmAlertOpen(true);
+    };
+    const handleConfirmAlertClose = () => {
+        setConfirmAlertOpen(false);
+    };
+
     const onSubmit = () => {
-        console.log(formData);
+        handleConfirmAlertOpen();
+    };
+
+    const sendRequest = () => {
         changePassword({
             oldPassword: formData.oldPassword,
             newPassword: formData.newPassword
@@ -67,7 +78,7 @@ const ChangePassword = () => {
         .catch(function (error) {
             console.log(error);
         })
-    }
+    };
     
     return(
         <>
@@ -141,6 +152,18 @@ const ChangePassword = () => {
                 </Paper>
             </Grid>
         </form>
+        <Dialog open={confirmAlertOpen} onClose={handleConfirmAlertClose}>
+            <DialogTitle>{"Confirm Changes"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Are you sure you want to save these changes?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions sx={{padding: "15px"}}>
+                <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={sendRequest}>Confirm</Button>
+                <Button onClick={handleConfirmAlertClose}>Cancel</Button>
+            </DialogActions>
+        </Dialog>
         </>
     )
 }

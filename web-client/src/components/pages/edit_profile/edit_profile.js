@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { Box, Button, Grid, Paper, Typography, TextField, Avatar, Badge, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Paper, Typography, TextField, Avatar, Badge, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import * as yup from "yup";
@@ -36,7 +36,7 @@ const EditProfile = () => {
     const [userInfo, setUserInfo] = useState({});
     useEffect(() => {
         getUserProfileById(decoded_token.UserProfileId).then(function (response) {
-            setUserInfo(response.data);
+            setUserInfo(response.data.basicInfo);
             setFormData({
                 firstname: response.data.basicInfo.firstName,
                 lastname: response.data.basicInfo.lastName,
@@ -87,9 +87,21 @@ const EditProfile = () => {
         }
 
         reader.readAsDataURL(file);
-    }
+    };
+
+    const [confirmAlertOpen, setConfirmAlertOpen] = useState(false);
+    const handleConfirmAlertOpen = () => {
+        setConfirmAlertOpen(true);
+    };
+    const handleConfirmAlertClose = () => {
+        setConfirmAlertOpen(false);
+    };
 
     const onSubmit = () => {
+        handleConfirmAlertOpen();
+    };
+
+    const sendRequest = () => {
         updateUserProfile(decoded_token.UserProfileId,
             {
                 universityID: formData.university,
@@ -107,7 +119,7 @@ const EditProfile = () => {
             }).catch(function (error) {
                 console.log(error);
         })
-    }
+    };
 
     const years = [ 
         {value: 1, option: "I"},
@@ -124,7 +136,7 @@ const EditProfile = () => {
         <>
         <NavbarLoggedIn/>
         <form onSubmit={handleSubmit(onSubmit)}>
-            {formData.firstname && formData.lastname && formData.university && formData.year && formData.phoneNumber && formData.email && formData.dateOfBirth && formData.hometown && userInfo.basicInfo.profilePicture && (
+            { userInfo.firstName && userInfo.lastName && userInfo.phoneNumber && userInfo.emailAddress && userInfo.dateOfBirth && userInfo.hometown && userInfo.profilePicture && (
                 <Grid container className="container-edit-profile">
                     <Paper elevation={3} className="paper">
                         <Grid container>
@@ -217,7 +229,6 @@ const EditProfile = () => {
                                                 required
                                                 {...register("dateOfBirth")}
                                                 label="Date of birth"
-                                                //value={formData.dateOfBirth}
                                                 value={dayjs(formData.dateOfBirth)}
                                                 onChange={(newValue) => {setFormData({...formData, dateOfBirth: newValue})}}
                                                 format="DD-MM-YYYY"
@@ -242,6 +253,18 @@ const EditProfile = () => {
                 </Grid>
             )}
         </form>
+        <Dialog open={confirmAlertOpen} onClose={handleConfirmAlertClose}>
+            <DialogTitle>{"Confirm Changes"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Are you sure you want to save these changes?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions sx={{padding: "15px"}}>
+                <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={sendRequest}>Confirm</Button>
+                <Button onClick={handleConfirmAlertClose}>Cancel</Button>
+            </DialogActions>
+        </Dialog>
         </>
     )
 }
