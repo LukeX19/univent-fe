@@ -111,7 +111,7 @@ const EventCardJoined = ({ joinedEvent }) => {
                 <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${joinedEvent.eventID}`)}}>
                     <Button variant="contained" sx={{width: '150px'}}>VIEW</Button>
                 </Grid>
-                { !joinedEvent.isCancelled && (
+                { !joinedEvent.isCancelled && new Date(joinedEvent.endTime) > new Date() && (
                     <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={handleLeaveEventAlertOpen}>
                         <Button variant="contained" sx={{width: '150px'}}>LEAVE</Button>
                     </Grid>
