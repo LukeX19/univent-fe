@@ -36,7 +36,14 @@
 
 .container-profile .edit-icon{
   font-size: 25px;
-  margin-left: 15px;
+  margin-left: 25px;
+  cursor: pointer;
+}
+
+.container-profile .key-icon{
+  font-size: 25px;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 .container-profile .university-icon{
