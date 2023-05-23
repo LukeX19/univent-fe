@@ -22,6 +22,7 @@ import "../create_event/create_event.css";
 const initialState = {eventName: "", eventType: "", startDate: "", startTime: "", endDate: "", endTime: "", nrParticipants: "", description: "", mapsLat: "", mapsLng: ""};
 
 const mapCenter = { lat: 45.75639952850472, lng: 21.228483690976592};
+const libraries = ['places'];
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -133,7 +134,7 @@ const CreateEvent = () => {
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API,
-        libraries: ['places']
+        libraries: libraries
     });
 
     const[map, setMap] = useState(/** @type google.maps.Map */ (null));

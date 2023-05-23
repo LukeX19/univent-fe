@@ -1,8 +1,10 @@
-import { React } from 'react';
-import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
+import { React } from "react";
+import { AppBar, Toolbar, Typography, Container, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 
 function ResponsiveAppBar() {
+  const navigate = useNavigate();
 
   return (
     <AppBar
@@ -16,7 +18,7 @@ function ResponsiveAppBar() {
                     Univent
                 </Typography>
             
-                <Button variant="contained">Log In</Button>
+                <Button variant="contained" onClick={() => {navigate("/signin")}}>Log In</Button>
             </Toolbar>
         </Container>
     </AppBar>

@@ -1,21 +1,17 @@
-import { React, useState, useEffect } from 'react';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Tab, Tabs, Box, Rating, Avatar, Grid, Typography } from '@mui/material';
+import { React, useState, useEffect } from "react";
+import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Tab, Tabs, Box, Rating, Avatar, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { deepOrange } from '@mui/material/colors';
-import IconButton from '@mui/material/IconButton';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
-import VpnKeyIcon from '@mui/icons-material/VpnKey';
-import NavbarLoggedIn from '../../navbar_logged/navbar_logged.js';
-import EventCardHosted from '../../event_card_hosted/event_card_hosted.js';
-import EventCardJoined from '../../event_card_joined/event_card_joined.js';
+import { deepOrange } from "@mui/material/colors";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import EditIcon from "@mui/icons-material/Edit";
+import VpnKeyIcon from "@mui/icons-material/VpnKey";
+import NavbarLoggedIn from "../../navbar_logged/navbar_logged.js";
+import EventCardHosted from "../../event_card_hosted/event_card_hosted.js";
+import EventCardJoined from "../../event_card_joined/event_card_joined.js";
 import jwt_decode from "jwt-decode";
 import { getUserProfileById, getUniversityById, getAverageRatingById, getEventsByUserId, getEventsByParticipantId, deleteUserProfile } from "../../../api/index.js";
 import { format } from "date-fns";
-import girl from '../../images/girl.jpg';
-import '../profile_page/profile_page.css';
+import "../profile_page/profile_page.css";
 
 const ProfilePage = () => {
     const navigate = useNavigate();
@@ -78,12 +74,12 @@ const ProfilePage = () => {
         setIsOpen(!isOpen);
     };
 
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => {
-        setOpen(true);
+    const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
+    const handleDeleteAlertOpen = () => {
+        setDeleteAlertOpen(true);
     };
-    const handleClose = () => {
-        setOpen(false);
+    const handleDeleteAlertClose = () => {
+        setDeleteAlertOpen(false);
     };
 
     const deleteAccount = () => {
@@ -95,7 +91,18 @@ const ProfilePage = () => {
           .catch(function (error) {
             console.log(error);
         });
-    }
+    };
+
+    const yearOptions = {
+        1: 'I',
+        2: 'II',
+        3: 'III',
+        4: 'IV',
+        5: 'V',
+        6: 'VI',
+        7: 'I Master',
+        8: 'II Master'
+      };
 
     return(
         <>
@@ -128,14 +135,14 @@ const ProfilePage = () => {
                                     <EditIcon className="edit-icon" onClick={() => {navigate("/profile/edit")}}/>
                                     <VpnKeyIcon className="key-icon" onClick={() => {navigate("/profile/change-password")}}/>
                                 </Box>
-                                <Typography><AccountBalanceIcon className="university-icon"/>{universityInfo.name}, Year: {yearInfo.toString()}</Typography>
+                                <Typography><AccountBalanceIcon className="university-icon"/>{universityInfo.name}, Year: {yearOptions[yearInfo]}</Typography>
                                 <Box className="info">
                                     <Typography mr={1}>Rating:</Typography>
                                     <Typography mr={1}>{ratingInfo.value}</Typography>
                                     <Rating readOnly precision={0.1} value={ratingInfo.value}/>
                                 </Box>
                                 <Typography pt={1} sx={{fontSize: '15px', color: 'grey'}}>Joined on {formattedJoinedDate}</Typography>
-                                <Typography sx={{fontSize: '15px', color: 'red'}}><span style={{ cursor: 'pointer' }} onClick={handleOpen}>Delete Account</span></Typography>
+                                <Typography sx={{fontSize: '15px', color: 'red'}}><span style={{ cursor: 'pointer' }} onClick={handleDeleteAlertOpen}>Delete Account</span></Typography>
                             </Box>
                         </Grid>
                     </Grid>
@@ -173,8 +180,8 @@ const ProfilePage = () => {
                 }                               
             </Grid>
         </Grid>
-        <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>{"Warning!"}</DialogTitle>
+        <Dialog open={deleteAlertOpen} onClose={handleDeleteAlertClose}>
+            <DialogTitle>{"Warning"}</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Are you sure you want to delete your account?
@@ -182,9 +189,9 @@ const ProfilePage = () => {
                     This action can not be undone.
                 </DialogContentText>
             </DialogContent>
-            <DialogActions>
-                <Button sx={{background: 'red', color: '#FBFBFB', "&:hover": {background: '#FFB84C'}}} onClick={() => {deleteAccount()}}>Delete</Button>
-                <Button onClick={handleClose}>Cancel</Button>
+            <DialogActions sx={{padding: "15px"}}>
+                <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {deleteAccount()}}>Delete</Button>
+                <Button onClick={handleDeleteAlertClose}>Cancel</Button>
             </DialogActions>
         </Dialog>
         </>

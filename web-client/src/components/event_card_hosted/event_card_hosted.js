@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Typography } from "@mui/material";
 import { getEventTypeById, getParticipantsByEventId, cancelEvent } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
@@ -36,10 +36,19 @@ const EventCardHosted = ({ hostedEvent }) => {
           });
     }, []);
 
+    const [cancelEventAlertOpen, setCancelEventAlertOpen] = useState(false);
+    const handleCancelEventAlertOpen = () => {
+        setCancelEventAlertOpen(true);
+    };
+    const handleCancelEventAlertClose = () => {
+        setCancelEventAlertOpen(false);
+    };
+
     const cancelCurrentEvent = (id) => {
         cancelEvent(id)
           .then(function (response) {
             console.log(response.status);
+            window.location.reload();
         })
           .catch(function (error) {
             console.log(error);
@@ -47,6 +56,7 @@ const EventCardHosted = ({ hostedEvent }) => {
     }
 
     return(
+        <>
         <Grid container pt={3} className="container-card-hosted">
             <Grid item xs={12} md={5} className="grid-image">
                 <img src={cooking} width="100%" height="100%"/>
@@ -70,9 +80,18 @@ const EventCardHosted = ({ hostedEvent }) => {
                         <Typography variant="h5">{hostedEvent.name}</Typography>
                         <Typography>{participantsNumber}/{hostedEvent.maximumParticipants} Participants Joined</Typography>
                     </Grid>
-                    <Grid item xs={12} md={12} py={2} textAlign="center">
-                        <Typography>Starts on {formattedStartTime}</Typography>
-                    </Grid>
+                    { !hostedEvent.isCancelled ? (
+                        <Grid item xs={12} md={12} py={2} textAlign="center">
+                            <Typography>Starts on {formattedStartTime}</Typography>
+                        </Grid>
+                        )
+                        :
+                        (
+                            <Grid item xs={12} md={12} py={2} textAlign="center">
+                                <Typography><span style={{ color: 'red' }}>Cancelled</span></Typography>
+                            </Grid>
+                        )
+                    }
                     <Grid item xs={12} md={12} textAlign="center">
                         <Typography fontSize="12px">Created on {formattedCreatedDate}</Typography>
                     </Grid>
@@ -82,14 +101,33 @@ const EventCardHosted = ({ hostedEvent }) => {
                 <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}`)}}>
                     <Button variant="contained" sx={{width: '150px'}}>VIEW</Button>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}/edit`)}}>
-                    <Button variant="contained" sx={{width: '150px'}}>EDIT</Button>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {cancelCurrentEvent(hostedEvent.eventID)}}>
-                    <Button variant="contained" sx={{width: '150px'}}>CANCEL</Button>
-                </Grid>
+                { !hostedEvent.isCancelled && (
+                    <>
+                    <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}/edit`)}}>
+                        <Button variant="contained" sx={{width: '150px'}}>EDIT</Button>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={handleCancelEventAlertOpen}>
+                        <Button variant="contained" sx={{width: '150px'}}>CANCEL</Button>
+                    </Grid>
+                    </>
+                )}
             </Grid>
         </Grid>
+        <Dialog open={cancelEventAlertOpen} onClose={handleCancelEventAlertClose}>
+            <DialogTitle>{"Confirm Cancellation"}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Are you sure you want to cancel this event?
+                    <br/>
+                    This action can not be undone.
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions sx={{padding: "15px"}}>
+                <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {cancelCurrentEvent(hostedEvent.eventID); handleCancelEventAlertClose()}}>Confirm</Button>
+                <Button onClick={handleCancelEventAlertClose}>Cancel</Button>
+            </DialogActions>
+        </Dialog>
+        </>
     );
 }
 
