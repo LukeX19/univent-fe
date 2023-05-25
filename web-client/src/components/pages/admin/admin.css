@@ -1,0 +1,28 @@
+.container-admin{
+    height: 89vh;
+    justify-content: center;
+}
+
+.container-admin .paper{
+    width: 900px;
+    padding: 60px;
+}
+
+.container-admin .title{
+    font-size: 25px;
+    border-left: 2px solid black;
+    padding-left: 10px;
+}
+
+@media only screen and (max-width: 600px){
+    .container-admin .paper{ 
+        width: 420px;
+        padding: 20px;
+    }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 900px){
+    .container-admin .paper{ 
+        width: 500px;
+    }
+}

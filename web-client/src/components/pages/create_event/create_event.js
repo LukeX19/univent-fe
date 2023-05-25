@@ -103,7 +103,7 @@ const CreateEvent = () => {
             setErrorMessage("");
             return 1;
         }
-    }
+    };
 
     const onSubmit = () => {
         if(checkDateTime())
