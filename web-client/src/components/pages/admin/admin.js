@@ -6,7 +6,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { DataGrid, GridToolbarContainer, GridToolbarFilterButton } from "@mui/x-data-grid";
-import { getAllUniversities, getAllEventTypes, addUniversity, updateUniversity, deleteUniversity, addEventType, updateEventType, deleteEventType } from "../../../api/index.js";
+import { format } from "date-fns";
+import { getAllUniversities, getAllEventTypes, addUniversity, updateUniversity, deleteUniversity, addEventType, updateEventType, deleteEventType, getUnapprovedUsers, getUniversityById, approveUserProfile } from "../../../api/index.js";
 import "../admin/admin.css";
 
 const Admin = () => {
@@ -44,21 +45,64 @@ const Admin = () => {
         });
     }, []);
 
+    const yearOptions = {
+        1: 'I',
+        2: 'II',
+        3: 'III',
+        4: 'IV',
+        5: 'V',
+        6: 'VI',
+        7: 'I Master',
+        8: 'II Master'
+    };
+    const [rowsUsers, setRowsUsers] = useState([]);
+    useEffect(() => {
+        getUnapprovedUsers()
+          .then(function (response) {
+            const userPromises = response.data.map((userProfile) => {
+              return getUniversityById(userProfile.universityID)
+                .then(function (universityResponse) {
+                  const universityName = universityResponse.data.name;
+                  return {
+                    id: userProfile.userProfileID,
+                    firstname: userProfile.basicInfo.firstName,
+                    lastname: userProfile.basicInfo.lastName,
+                    university: universityName,
+                    year: yearOptions[userProfile.year],
+                    emailAddress: userProfile.basicInfo.emailAddress,
+                    phoneNumber: userProfile.basicInfo.phoneNumber,
+                    dateOfBirth: format(new Date(userProfile.basicInfo.dateOfBirth), "dd.MM.yyyy"),
+                    hometown: userProfile.basicInfo.hometown
+                  };
+                })
+                .catch(function (universityError) {
+                  console.log("Error getting university:", universityError);
+                });
+            });
+            return Promise.all(userPromises);
+          })
+          .then(function (modifiedData) {
+            setRowsUsers(modifiedData);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }, []);
+
+
     const [university, setUniversity] = useState({id: "", name: ""});
     const [eventType, setEventType] = useState({id: "", name: ""});
+    const [user, setUser] = useState({id: ""});
 
     const [openAddUniversity, setOpenAddUniversity] = useState(false);
     const [openEditUniversity, setOpenEditUniversity] = useState(false);
     const [openDeleteUniversity, setOpenDeleteUniversity] = useState(false);
-    
     const handleOpenAddUniversity = () => {
         setOpenAddUniversity(true);
     };
-
     const handleOpenEditUniversity = () => {
         setOpenEditUniversity(true);
     };
-
     const handleOpenDeleteUniversity = () => {
         setOpenDeleteUniversity(true);
     };
@@ -66,17 +110,19 @@ const Admin = () => {
     const [openAddEventType, setOpenAddEventType] = useState(false);
     const [openEditEventType, setOpenEditEventType] = useState(false);
     const [openDeleteEventType, setOpenDeleteEventType] = useState(false);
-
     const handleOpenAddEventType = () => {
         setOpenAddEventType(true);
     };
-
     const handleOpenEditEventType= () => {
         setOpenEditEventType(true);
     };
-
     const handleOpenDeleteEventType = () => {
         setOpenDeleteEventType(true);
+    };
+
+    const [openApproveUser, setOpenApproveUser] = useState(false);
+    const handleOpenApproveUser = () => {
+        setOpenApproveUser(true);
     };
 
     const handleClose = () => {
@@ -86,6 +132,7 @@ const Admin = () => {
         setOpenAddEventType(false);
         setOpenEditEventType(false);
         setOpenDeleteEventType(false);
+        setOpenApproveUser(false);
     };
 
     const AddUniversity = () => {
@@ -167,6 +214,18 @@ const Admin = () => {
             console.log(error);
         })
     };
+
+    const ApproveUser = (id) => {
+        approveUserProfile(id)
+        .then(function (response) {
+            console.log(response.status);
+            handleClose();
+            window.location.reload();
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    }
 
     const hiddenColumn = ['id'];
 
@@ -283,25 +342,16 @@ const Admin = () => {
         {field: 'approve', headerName: '', width: 110, sortable: false, filterable: false, hideable: false,
             renderCell: (cellValues) => {
                 return (
-                    <Button size="small"><VerifiedIcon sx={{color: '#1B9C85'}}/></Button>
+                    <Button size="small" onClick = {() => 
+                        {
+                            setUser({id: cellValues.id});
+                            handleOpenApproveUser(); 
+                        }}>
+                        <VerifiedIcon sx={{color: '#1B9C85'}}/>
+                    </Button>
                 )
             }
         },
-    ];
-
-    const rowsUsers = [
-        {id: 'D9D5760F-9B25-4631-CE23-0Sd8DB5137F81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0dF8DB5137F81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: 'Master II', emailAddress: 'catalin.secosan@student.upt.ro', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8GDB5137F81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8DTB5137F81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8DBH5137F81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8DB5J137F81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8DB51M37F81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8DB513K7F81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8DB5137IF81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8DB5137FO81C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Targul - Ocna de Sus'},
-        {id: 'D9D5760F-9B25-4631-CE23-0d8DB5137F8P1C', firstname: 'Ionel', lastname: 'Popescu', university: 'Universitatea de Vest', year: '3', emailAddress: 'popescu.ionel@gmail.com', phoneNumber: '0712345678', dateOfBirth: '20/12/2001', hometown: 'Cluj-Napoca'},
-       
     ];
 
     function CustomToolbarUsers(){
@@ -433,7 +483,7 @@ const Admin = () => {
                 <DialogTitle>Delete University</DialogTitle>
                 <DialogContent sx={{width: '500px'}}>
                     <DialogContentText>
-                        Are you sure?
+                        Are you sure you want to delete this University?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -491,12 +541,25 @@ const Admin = () => {
                 <DialogTitle>Delete Event Type</DialogTitle>
                 <DialogContent sx={{width: '500px'}}>
                     <DialogContentText>
-                        Are you sure?
+                        Are you sure you want to delete this Event Type?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
                     <Button onClick={() => {DeleteEventType(eventType)}}>CONFIRM</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={openApproveUser} onClose={handleClose}>
+                <DialogTitle>Approve User</DialogTitle>
+                <DialogContent sx={{width: '500px'}}>
+                    <DialogContentText>
+                        Are you sure you want to approve this account to the platform?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={() => {ApproveUser(user.id)}}>CONFIRM</Button>
                 </DialogActions>
             </Dialog>
 
