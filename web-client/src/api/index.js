@@ -21,7 +21,9 @@ export const changePassword = (formData) => apiWithToken().patch("api/v1/Identit
 //UserProfiles
 export const getAllUserProfiles = () => apiWithToken().get("api/v1/UserProfiles");
 export const getUserProfileById = (id) => apiWithToken().get(`api/v1/UserProfiles/${id}`);
+export const getUnapprovedUsers = () => apiWithToken().get("api/v1/UserProfiles/Unapproved");
 export const updateUserProfile = (id, formData) => apiWithToken().patch(`api/v1/UserProfiles/${id}`, formData);
+export const approveUserProfile = (id) => apiWithToken().patch(`api/v1/UserProfiles/${id}/Approve`);
 export const deleteUserProfile = (id) => apiWithToken().delete(`api/v1/UserProfiles/${id}`);
 
 //Universities

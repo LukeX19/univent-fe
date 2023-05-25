@@ -102,7 +102,7 @@ const ProfilePage = () => {
         6: 'VI',
         7: 'I Master',
         8: 'II Master'
-      };
+    };
 
     return(
         <>

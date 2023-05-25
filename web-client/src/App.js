@@ -10,6 +10,7 @@ import ChangePassword from "./components/pages/change_password/change_password.j
 import FeedbackForm from "./components/pages/feedback_form/feedback_form.js";
 import Signin from "./components/pages/signin/signin.js";
 import Signup from "./components/pages/signup/signup.js";
+import Admin from "./components/pages/admin/admin.js";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route exact path="/event/:eventID/feedback" element={<FeedbackForm/>}/>
           <Route exact path="/signin" element={<Signin/>}/>
           <Route exact path="/register" element={<Signup/>}/>
+          <Route exact path="/admin" element={<Admin/>}/>
         </Routes>
       </BrowserRouter>
     </>

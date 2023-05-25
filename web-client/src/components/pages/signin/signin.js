@@ -6,6 +6,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { login } from "../../../api/index";
+import jwt_decode from "jwt-decode";
 import '../signin/signin.css';
 
 const initialState = {email: "", password: ""};
@@ -41,7 +42,15 @@ const Signin = () => {
             password: formData.password
         }).then(function (response) {
             localStorage.setItem("token", response.data.token);
-            navigate("/feed");
+            const decoded_token = jwt_decode(response.data.token);
+            if(decoded_token.Role === "Admin")
+            {
+                navigate("/admin");
+            }
+            else
+            {
+                navigate("/feed");
+            }
         })
         .catch(function (error) {
             console.log(error);

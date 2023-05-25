@@ -42,7 +42,7 @@ function ResponsiveAppBar() {
     const handleLogout = () => {
         localStorage.removeItem("token");
         navigate("/");
-      };
+    };
 
     const [userInfo, setUserInfo] = useState({});
     const decoded_token = jwt_decode(localStorage.getItem("token"));
