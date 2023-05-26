@@ -14,6 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
 import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api";
 import { getAllEventTypes, addEvent } from "../../../api/index.js";
+import { useNavigate } from "react-router-dom";
 import { format } from 'date-fns';
 import cooking from "../../images/cooking.png";
 import maps from "../../images/maps.jpg"
@@ -52,6 +53,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const CreateEvent = () => {
+    const navigate = useNavigate();
+
     const [eventTypes, setEventTypes] = useState([]);
     useEffect(() => {
         getAllEventTypes().then(function (response) {
@@ -123,6 +126,7 @@ const CreateEvent = () => {
                 }
             ).then(function (response) {
                 console.log(response.status);
+                navigate("/feed");
             })
             .catch(function (error) {
                 console.log(error);
