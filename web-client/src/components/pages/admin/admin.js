@@ -376,7 +376,7 @@ const Admin = () => {
                         </Grid>
                        
                         <Grid item xs={12} py={1}>
-                            <Accordion defaultExpanded={true} sx={{width: '100%'}}>
+                            <Accordion defaultExpanded={false} sx={{width: '100%'}}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon/>} sx={{background: '#EEEEEE'}}>
                                     <Typography>Universities</Typography>
                                 </AccordionSummary>
@@ -395,7 +395,7 @@ const Admin = () => {
                         </Grid>
                        
                         <Grid item xs={12} py={1}>
-                            <Accordion defaultExpanded={true} sx={{width: '100%'}}>
+                            <Accordion defaultExpanded={false} sx={{width: '100%'}}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon/>} sx={{background: '#EEEEEE'}}>
                                     <Typography>Event Types</Typography>
                                 </AccordionSummary>
@@ -413,7 +413,7 @@ const Admin = () => {
                             </Accordion>
                         </Grid>
                         <Grid item xs={12} py={1}>
-                            <Accordion defaultExpanded={true} sx={{width: '100%'}}>
+                            <Accordion defaultExpanded={false} sx={{width: '100%'}}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon/>} sx={{background: '#EEEEEE'}}>
                                     <Typography>Pending Users</Typography>
                                 </AccordionSummary>
@@ -438,9 +438,9 @@ const Admin = () => {
                 <DialogTitle>Add New University</DialogTitle>
                 <DialogContent sx={{width: '500px'}}>
                     <DialogContentText>
-                        Add new university here
+                        Enter the name here
                     </DialogContentText>
-                    <TextField 
+                    <TextField
                         onChange={(event) => {setUniversity({...university, id: "", name: event.target.value})}}
                         autoFocus
                         type="text"
@@ -450,9 +450,9 @@ const Admin = () => {
                         size="small"
                     /> 
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{padding: "15px"}}>
+                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={AddUniversity}>Save</Button>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={AddUniversity}>SAVE</Button>
                 </DialogActions>
             </Dialog>
 
@@ -460,35 +460,37 @@ const Admin = () => {
                 <DialogTitle>Edit University</DialogTitle>
                 <DialogContent sx={{width: '500px'}}>
                     <DialogContentText>
-                        Enter new name here
+                        Enter a new name here
                     </DialogContentText>
-                    <TextField 
-                        value={university.name} 
-                        onChange={(event) => {setUniversity({...university, name: event.target.value})}} 
-                        autoFocus 
-                        type="text" 
-                        margin="dense" 
-                        fullWidth 
-                        variant="outlined" 
+                    <TextField
+                        value={university.name}
+                        onChange={(event) => {setUniversity({...university, name: event.target.value})}}
+                        autoFocus
+                        type="text"
+                        margin="dense"
+                        fullWidth
+                        variant="outlined"
                         size="small"
                     /> 
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{padding: "15px"}}>
+                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {EditUniversity(university)}}>Save</Button>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => {EditUniversity(university)}}>SAVE</Button>
                 </DialogActions>
             </Dialog>
 
             <Dialog open={openDeleteUniversity} onClose={handleClose}>
-                <DialogTitle>Delete University</DialogTitle>
+                <DialogTitle>Warning</DialogTitle>
                 <DialogContent sx={{width: '500px'}}>
                     <DialogContentText>
-                        Are you sure you want to delete this University?
+                        Are you sure you want to remove this University?
+                        <br/>
+                        This action cannot be undone. Existing profiles for users currently enrolled in this university and all events created by them will be permanently deleted!
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{padding: "15px"}}>
+                    <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {DeleteUniversity(university)}}>CONFIRM</Button>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => {DeleteUniversity(university)}}>CONFIRM</Button>
                 </DialogActions>
             </Dialog>
 
@@ -496,21 +498,21 @@ const Admin = () => {
                 <DialogTitle>Add New Event Type</DialogTitle>
                 <DialogContent sx={{width: '500px'}}>
                     <DialogContentText>
-                        Add new Event Type here
+                        Enter the name here
                     </DialogContentText>
-                    <TextField 
-                        onChange={(event) => {setEventType({...eventType, name: event.target.value})}} 
-                        autoFocus 
-                        type="text" 
-                        margin="dense" 
-                        fullWidth 
-                        variant="outlined" 
+                    <TextField
+                        onChange={(event) => {setEventType({...eventType, id: "", name: event.target.value})}}
+                        autoFocus
+                        type="text"
+                        margin="dense"
+                        fullWidth
+                        variant="outlined"
                         size="small"
                     /> 
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{padding: "15px"}}>
+                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={AddEventType}>Save</Button>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={AddEventType}>SAVE</Button>
                 </DialogActions>
             </Dialog>
 
@@ -518,35 +520,37 @@ const Admin = () => {
                 <DialogTitle>Edit Event Type</DialogTitle>
                 <DialogContent sx={{width: '500px'}}>
                     <DialogContentText>
-                        Enter new event type here
+                        Enter a new name here
                     </DialogContentText>
-                    <TextField 
-                        value={eventType.name} 
-                        onChange={(event) => {setEventType({...eventType, name: event.target.value})}} 
-                        autoFocus 
-                        type="text" 
-                        margin="dense" 
-                        fullWidth 
-                        variant="outlined" 
+                    <TextField
+                        value={eventType.name}
+                        onChange={(event) => {setEventType({...eventType, name: event.target.value})}}
+                        autoFocus
+                        type="text"
+                        margin="dense"
+                        fullWidth
+                        variant="outlined"
                         size="small"
                     /> 
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{padding: "15px"}}>
+                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {EditEventType(eventType)}}>Save</Button>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => {EditEventType(eventType)}}>SAVE</Button>
                 </DialogActions>
             </Dialog>
 
             <Dialog open={openDeleteEventType} onClose={handleClose}>
-                <DialogTitle>Delete Event Type</DialogTitle>
+                <DialogTitle>Warning</DialogTitle>
                 <DialogContent sx={{width: '500px'}}>
                     <DialogContentText>
-                        Are you sure you want to delete this Event Type?
+                        Are you sure you want to remove this Event Type?
+                        <br/>
+                        This action cannot be undone and existing events, along with their participant lists, will be permanently deleted!
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{padding: "15px"}}>
+                    <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {DeleteEventType(eventType)}}>Confirm</Button>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => {DeleteEventType(eventType)}}>CONFIRM</Button>
                 </DialogActions>
             </Dialog>
 
@@ -557,9 +561,9 @@ const Admin = () => {
                         Are you sure you want to approve this account to the platform?
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{padding: "15px"}}>
+                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {ApproveUser(user.id)}}>Confirm</Button>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={() => {ApproveUser(user.id)}}>CONFIRM</Button>
                 </DialogActions>
             </Dialog>
 

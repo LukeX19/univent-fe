@@ -86,7 +86,7 @@ const Signin = () => {
                         </Grid>
                         <Grid item xs={12} py={1} className="signup-section">
                             <Typography>New to our platform? Create an account</Typography>
-                            <Typography className="signup-link" onClick={() => {navigate("/signup")}}>here</Typography>
+                            <Typography className="signup-link" onClick={() => {navigate("/register")}}>here</Typography>
                         </Grid>
                         <Grid item xs={12} py={2} className="button-container"> 
                             <Button variant="contained" type="submit" className="signin-button">LOGIN</Button>
