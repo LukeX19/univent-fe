@@ -74,10 +74,11 @@ const ChangePassword = () => {
             oldPassword: formData.oldPassword,
             newPassword: formData.newPassword
         }).then(function (response) {
-            navigate("/profile");
+            localStorage.removeItem("token");
+            navigate("/");
         })
         .catch(function (error) {
-            (error.response.status === 400)? setErrorMessage(`The old password is wrong`) : alert("An error occured on server. Please try again later.");
+            (error.response.status === 400)? setErrorMessage(`The old password you provided is not correct`) : alert("An error occured on server. Please try again later.");
             setConfirmAlertOpen(false);
             console.log(error);
         })
@@ -147,7 +148,7 @@ const ChangePassword = () => {
                             </Grid>
                         </Grid>
                         {errorMessage &&
-                            <Grid item xs={12} pb={2}>
+                            <Grid item xs={12} pb={4}>
                                 <Alert severity="error">{errorMessage}</Alert>
                             </Grid>
                         }
@@ -165,6 +166,8 @@ const ChangePassword = () => {
             <DialogContent>
                 <DialogContentText>
                     Are you sure you want to save these changes?
+                    <br/>
+                    You will be prompted to log in again, using the new password.
                 </DialogContentText>
             </DialogContent>
             <DialogActions sx={{padding: "15px"}}>
