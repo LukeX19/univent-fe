@@ -1,5 +1,5 @@
 import { React, useState } from 'react';
-import { Grid, Typography, TextField, Button, IconButton, InputAdornment, Paper } from '@mui/material';
+import { Grid, Typography, TextField, Button, IconButton, InputAdornment, Paper, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -12,7 +12,6 @@ import '../signin/signin.css';
 const initialState = {email: "", password: ""};
 
 const Signin = () => {
-
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState(initialState);
@@ -36,6 +35,8 @@ const Signin = () => {
         resolver: yupResolver(schema)
     });
 
+    const [errorMessage, setErrorMessage] = useState('');
+    const [warningMessage, setWarningMessage] = useState('');
     const onSubmit = () => {
         login({
             username: formData.email,
@@ -53,6 +54,20 @@ const Signin = () => {
             }
         })
         .catch(function (error) {
+            if(error.response.status === 404 || error.response.status === 400)
+            {
+                setErrorMessage(`Username or password are incorrect`);
+                setWarningMessage('');
+            }
+            else if(error.response.status === 403)
+            {
+                setWarningMessage(`This account has not been approved yet Administrator will approve it in maximum 24 hours`);
+                setErrorMessage('');
+            }
+            else
+            {
+                alert("An error occured on server. Please try again later.");
+            }
             console.log(error);
         })
     };
@@ -88,6 +103,16 @@ const Signin = () => {
                             <Typography>New to our platform? Create an account</Typography>
                             <Typography className="signup-link" onClick={() => {navigate("/register")}}>here</Typography>
                         </Grid>
+                        {errorMessage &&
+                            <Grid item xs={12} pt={1} pb={2}>
+                                <Alert severity="error">{errorMessage}</Alert>
+                            </Grid>
+                        }
+                        {warningMessage &&
+                            <Grid item xs={12} pt={1} pb={2}>
+                                <Alert severity="warning">{warningMessage}</Alert>
+                            </Grid>
+                        }
                         <Grid item xs={12} py={2} className="button-container"> 
                             <Button variant="contained" type="submit" className="signin-button">LOGIN</Button>
                         </Grid>

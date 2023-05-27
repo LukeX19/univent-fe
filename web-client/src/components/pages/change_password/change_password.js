@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Paper, Typography, TextField, IconButton, InputAdornment } from "@mui/material";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid, Paper, Typography, TextField, IconButton, InputAdornment, Alert } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -68,14 +68,18 @@ const ChangePassword = () => {
         handleConfirmAlertOpen();
     };
 
+    const [errorMessage, setErrorMessage] = useState('');
     const sendRequest = () => {
         changePassword({
             oldPassword: formData.oldPassword,
             newPassword: formData.newPassword
         }).then(function (response) {
-            navigate("/profile");
+            localStorage.removeItem("token");
+            navigate("/");
         })
         .catch(function (error) {
+            (error.response.status === 400)? setErrorMessage(`The old password you provided is not correct`) : alert("An error occured on server. Please try again later.");
+            setConfirmAlertOpen(false);
             console.log(error);
         })
     };
@@ -129,7 +133,7 @@ const ChangePassword = () => {
                                     />
                                     <Typography className="error">{errors.confirmPassword?.message}</Typography>
                                 </Grid>
-                                <Grid item xs={12} pb={3}>
+                                <Grid item xs={12}>
                                     <div className="password-requirements">
                                         <p>Password must have at least: </p>
                                         <ul>
@@ -143,6 +147,11 @@ const ChangePassword = () => {
                                 </Grid>
                             </Grid>
                         </Grid>
+                        {errorMessage &&
+                            <Grid item xs={12} pb={4}>
+                                <Alert severity="error">{errorMessage}</Alert>
+                            </Grid>
+                        }
                         <Grid item xs={12} py={1}>
                             <Box display="flex" justifyContent="flex-end">
                                 <Button type="submit" variant="contained">SAVE CHANGES</Button>
@@ -157,6 +166,8 @@ const ChangePassword = () => {
             <DialogContent>
                 <DialogContentText>
                     Are you sure you want to save these changes?
+                    <br/>
+                    You will be prompted to log in again, using the new password.
                 </DialogContentText>
             </DialogContent>
             <DialogActions sx={{padding: "15px"}}>
