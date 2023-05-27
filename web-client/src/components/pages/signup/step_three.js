@@ -1,5 +1,5 @@
-import { React } from "react";
-import { Grid, Typography, Box, Button, Avatar, Badge } from "@mui/material";
+import { React, useState } from "react";
+import { Grid, Typography, Box, Button, Avatar, Badge, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -24,8 +24,10 @@ const StepThree = ({formData, setFormData, handleBack}) => {
         }
 
         reader.readAsDataURL(file);
-    }
+    };
 
+    const [errorMessage, setErrorMessage] = useState('');
+    const [warningAlertOpen, setWarningAlertOpen] = useState(false);
     const submit = () => {
         register({
             username: formData.email,
@@ -39,15 +41,16 @@ const StepThree = ({formData, setFormData, handleBack}) => {
             hometown: formData.hometown,
             profilePicture: formData.avatar
         }).then(function (response) {
-            localStorage.setItem("token", response.data.token);
-            navigate("/feed");
+            setWarningAlertOpen(true);
         })
         .catch(function (error) {
+            (error.response.status === 409)? setErrorMessage(`A user account with email "${formData.email}" already exists`) : alert("An error occured on server. Please try again later.");
             console.log(error);
         })
-    }
+    };
 
     return(
+        <>
         <Grid container>
             <Grid item xs={12} py={1}>
                 <Typography fontSize="16px">You can either upload a profile picture now or choose to skip this step and set it up at a later time.</Typography>
@@ -74,6 +77,11 @@ const StepThree = ({formData, setFormData, handleBack}) => {
 
                 <input type="file" id="avatar" accept=".jpg, .jpeg, .png" style={{display : "none"}} onChange={(event) => {uploadImage(event)}}/>
             </Grid>
+            {errorMessage &&
+                <Grid item xs={12} pb={4}>
+                    <Alert severity="error">{errorMessage}</Alert>
+                </Grid>
+            }
             <Grid item xs={6}>
                 <Box xs={6} className="prev">
                     <Button className="prev-button" variant="contained" onClick={handleBack}>Back</Button>
@@ -85,6 +93,21 @@ const StepThree = ({formData, setFormData, handleBack}) => {
                 </Box>
             </Grid>
         </Grid>
+        <Dialog open={warningAlertOpen}>
+            <DialogTitle>Important Note</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Your request for an account on Univent platform has been successfully sent!
+                    <br/>
+                    You will be granted access by the administrator in maximum 24 hours.
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions sx={{padding: "15px"}}>
+                <Button sx={{background: "#18BF89", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {navigate("/");}}>I Understand</Button>
+                {/* <Button sx={{"&:hover": {color: "#FBFBFB", background: "#18BF89"}}} variant="outlined">I Understand</Button> */}
+            </DialogActions>
+        </Dialog>
+        </>
     )
 }
 
