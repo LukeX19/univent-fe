@@ -136,7 +136,7 @@ const EditProfile = () => {
         <>
         <NavbarLoggedIn/>
         <form onSubmit={handleSubmit(onSubmit)}>
-            { userInfo.firstName && userInfo.lastName && userInfo.phoneNumber && userInfo.emailAddress && userInfo.dateOfBirth && userInfo.hometown && userInfo.profilePicture && (
+            { userInfo.firstName && userInfo.lastName && userInfo.phoneNumber && userInfo.emailAddress && userInfo.dateOfBirth && userInfo.hometown && (
                 <Grid container className="container-edit-profile">
                     <Paper elevation={3} className="paper">
                         <Grid container>

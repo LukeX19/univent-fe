@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import NavbarLoggedIn from "../../navbar_logged/navbar_logged.js";
-import { getEventById, getParticipantsByEventId, addRating, markFeedbackSent } from "../../../api/index.js";
+import { getEventById, getParticipantsByEventId, addRating, markFeedbackSent, getUserProfileById } from "../../../api/index.js";
 import { format } from "date-fns";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -20,28 +20,41 @@ const FeedbackForm = () => {
     const [participantsList, setParticipantsList] = useState([]);
     const [participantsRatings, setParticipantsRatings] = useState([]);
     useEffect(() => {
-        Promise.all([
-          getEventById(param.eventID),
-          getParticipantsByEventId(param.eventID)
-        ])
-          .then(function ([eventResponse, participantsResponse]) {
-            setEventInfo(eventResponse.data);
+        const fetchData = async () => {
+            try {
+                const [eventResponse, participantsResponse] = await Promise.all([
+                    getEventById(param.eventID),
+                    getParticipantsByEventId(param.eventID)
+                ]);
+    
+                //Exclude the logged-in user from participants list in the feedback form
+                const participants = participantsResponse.data.filter(
+                    participant => participant.userProfileID !== decoded_token.UserProfileId
+                );
 
-            //Exclude the logged-in user from participants list in feedback form
-            const participants = participantsResponse.data.filter(
-                participant => participant.userProfileID !== decoded_token.UserProfileId
-            );
-            setParticipantsList(participants);
+                //Retrieve user author
+                const userAuthorResponse = await getUserProfileById(eventResponse.data.userProfileID);
+                const userAuthor = userAuthorResponse.data;
+    
+                //Add user author to the participants list
+                const updatedParticipants = [userAuthor, ...participants];
+    
+                //Set the updated participants list
+                setParticipantsList(updatedParticipants);
 
-            const ratings = participants.map(participant => ({
-                userProfileID: participant.userProfileID,
-                value: 0
-            }));
-            setParticipantsRatings(ratings);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+                //Set initial value to 0 for Rating component
+                const ratings = updatedParticipants.map(participant => ({
+                    userProfileID: participant.userProfileID,
+                    value: 0
+                }));
+
+                setParticipantsRatings(ratings);
+                setEventInfo(eventResponse.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchData();
     }, [param.eventID, decoded_token.UserProfileId]);
 
     const formattedStartTime = eventInfo.startTime ? 
