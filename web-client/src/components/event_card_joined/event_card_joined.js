@@ -119,7 +119,7 @@ const EventCardJoined = ({ joinedEvent }) => {
                     <Grid item xs={12} md={12} textAlign="center">
                         <Typography fontSize="15px">Created by {userAuthor.lastName} {userAuthor.firstName}</Typography>
                     </Grid>
-                    {feedbackAvailable &&
+                    {feedbackAvailable && (new Date(joinedEvent.endTime) < new Date()) &&
                         <Grid item xs={12} pt={1} textAlign="center" sx={{fontStyle: "italic", color: "orange"}}>
                             <span style={{cursor: "pointer"}} onClick={() => {navigate(`/event/${joinedEvent.eventID}/feedback`)}}>Enjoyed this event? Rate other participants here!</span>
                         </Grid>
