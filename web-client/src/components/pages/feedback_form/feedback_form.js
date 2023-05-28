@@ -4,13 +4,17 @@ import { useParams } from "react-router-dom";
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import NavbarLoggedIn from "../../navbar_logged/navbar_logged.js";
-import { getEventById, getParticipantsByEventId, addRating } from "../../../api/index.js";
+import { getEventById, getParticipantsByEventId, addRating, markFeedbackSent } from "../../../api/index.js";
 import { format } from "date-fns";
+import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import { deepOrange } from "@mui/material/colors";
 import "../feedback_form/feedback_form.css";
 
 const FeedbackForm = () => {
     const param = useParams();
+    const navigate = useNavigate();
+    const decoded_token = jwt_decode(localStorage.getItem("token"));
 
     const [eventInfo, setEventInfo] = useState({});
     const [participantsList, setParticipantsList] = useState([]);
@@ -22,9 +26,14 @@ const FeedbackForm = () => {
         ])
           .then(function ([eventResponse, participantsResponse]) {
             setEventInfo(eventResponse.data);
-            setParticipantsList(participantsResponse.data);
 
-            const ratings = participantsResponse.data.map(participant => ({
+            //Exclude the logged-in user from participants list in feedback form
+            const participants = participantsResponse.data.filter(
+                participant => participant.userProfileID !== decoded_token.UserProfileId
+            );
+            setParticipantsList(participants);
+
+            const ratings = participants.map(participant => ({
                 userProfileID: participant.userProfileID,
                 value: 0
             }));
@@ -33,7 +42,7 @@ const FeedbackForm = () => {
           .catch(function (error) {
             console.log(error);
           });
-    }, [param.eventID]);
+    }, [param.eventID, decoded_token.UserProfileId]);
 
     const formattedStartTime = eventInfo.startTime ? 
         format(new Date(eventInfo.startTime), "dd.MM.yyyy 'at' HH:mm")
@@ -51,6 +60,14 @@ const FeedbackForm = () => {
     };
 
     const sendRatings = () => {
+        markFeedbackSent(param.eventID)
+        .then(function (response) {
+            console.log(response.status);
+        })
+          .catch(function (error) {
+            console.log(error);
+        });
+
         participantsRatings.forEach(({ userProfileID, value }) => {
             addRating({
                 userProfileID: userProfileID,
@@ -63,7 +80,9 @@ const FeedbackForm = () => {
                 console.log(error);
             });
         });
-    }
+
+        navigate("/profile");
+    };
     
     return(
         <>
