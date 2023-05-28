@@ -16,7 +16,6 @@ import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEventById, getEventTypeById, getUserProfileById, updateEvent, getParticipantsByEventId } from '../../../api/index.js';
 import { format } from "date-fns";
-import maps from '../../images/maps.jpg';
 import cooking from '../../images/cooking.png';
 import '../edit_event/edit_event.css';
 
