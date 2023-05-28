@@ -8,7 +8,7 @@ export const apiWithToken = () => {
 
     return axios.create({
         baseURL: "https://localhost:7260/",
-        timeout: 1000,
+        timeout: 10000,
         headers: {"Authorization": "Bearer " + token}
     });
 };
@@ -51,10 +51,11 @@ export const deleteEvent = (id) => apiWithToken().delete(`api/v1/Events/${id}`);
 
 //EventParticipants
 export const getAllEventParticipantCombinations = () => apiWithToken().get("api/v1/EventParticipant");
-// export const getEventParticipantByBothIds = (idEvent, idUser) => apiWithToken.get(`api/v1/EventParticipant/Event/${idEvent}/User/${idUser}`);
+export const getEventParticipantByBothIds = (idEvent, idUser) => apiWithToken().get(`api/v1/EventParticipant/Event/${idEvent}/User/${idUser}`);
 export const getParticipantsByEventId = (idEvent) => apiWithToken().get(`api/v1/EventParticipant/Event/${idEvent}/Participants`);
 export const getEventsByParticipantId = (idUser) => apiWithToken().get(`api/v1/EventParticipant/User/${idUser}/EnrolledEvents`);
 export const addEventParticipant = (formData) => apiWithToken().post("api/v1/EventParticipant", formData);
+export const markFeedbackSent = (idEvent) => apiWithToken().patch(`api/v1/EventParticipant/Event/${idEvent}/Feedback`);
 export const deleteEventParticipant = (idEvent) => apiWithToken().delete(`api/v1/EventParticipant/Event/${idEvent}/Participants`);
 
 //Ratings
