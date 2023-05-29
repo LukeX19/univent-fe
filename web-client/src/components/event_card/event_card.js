@@ -2,7 +2,6 @@ import { React, useState, useEffect } from "react";
 import "../event_card/event_card.css";
 import { Avatar, Box, Button, Grid, Paper, Rating, Typography } from '@mui/material';
 import { deepOrange } from '@mui/material/colors';
-import cooking from "../images/cooking.png";
 import { getEventTypeById, getUserProfileById, getParticipantsByEventId, getAverageRatingById } from "../../api";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -14,11 +13,14 @@ const EventCard = ({ event }) => {
   
     const [eventType, setEventType] = useState("");
     const [eventTypeLoading, setEventTypeLoading] = useState(true);
+    const [eventTypePicture, setEventTypePicture] = useState(null);
     useEffect(() => {
       getEventTypeById(event.eventTypeID)
-        .then(function (response) {
-          setEventType(response.data.name);
+        .then(async function (response) {
+          setEventType(response.data);
           setEventTypeLoading(false);
+          const picture = await import("../../images/" + response.data.picture);
+          setEventTypePicture(picture.default);
         })
         .catch(function (error) {
           console.log(error);
@@ -60,7 +62,7 @@ const EventCard = ({ event }) => {
             <Paper elevation={10} className="paper">
                 <Grid container>
                     <Grid item xs={12} md={4} className="grid-image">
-                        <img src={cooking} width="100%" height="100%"/>
+                        <img src={eventTypePicture} width="100%" height="100%"/>
                         <Box className="box">
                             { eventTypeLoading ?
                                 (
@@ -71,7 +73,7 @@ const EventCard = ({ event }) => {
                                 :
                                 (
                                     <Typography pl={2} py={2} className="placeholder">
-                                        {eventType}
+                                        {eventType.name}
                                     </Typography>
                                 )
                             }

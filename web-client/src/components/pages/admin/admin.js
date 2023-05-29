@@ -36,6 +36,7 @@ const Admin = () => {
               return {
                 id: eventType.eventTypeID,
                 name: eventType.name,
+                picture: eventType.picture
             };
         });
             setRowsEventTypes(modifiedData);
@@ -91,7 +92,7 @@ const Admin = () => {
 
 
     const [university, setUniversity] = useState({id: "", name: ""});
-    const [eventType, setEventType] = useState({id: "", name: ""});
+    const [eventType, setEventType] = useState({id: "", name: "", picture: ""});
     const [user, setUser] = useState({id: ""});
 
     const [openAddUniversity, setOpenAddUniversity] = useState(false);
@@ -178,7 +179,8 @@ const Admin = () => {
     const AddEventType = () => {
         addEventType(
             {
-                name: eventType.name
+                name: eventType.name,
+                picture: eventType.picture
             }
         ).then(function (response) {
             console.log(response.status);
@@ -192,7 +194,8 @@ const Admin = () => {
     const EditEventType = (evType) => {
         updateEventType(evType.id,
             {
-                name: evType.name
+                name: evType.name,
+                picture: evType.picture
             }
         ).then(function (response) {
             console.log(response.status);
@@ -281,14 +284,15 @@ const Admin = () => {
 
     const columnsEventTypes = [
         {field: 'id', headerName: 'ID'},
-        {field: 'name', headerName: 'Name', width: 640, hideable: false},
+        {field: 'name', headerName: 'Name', width: 300, hideable: false},
+        {field: 'picture', headerName: 'Picture', width: 340},
         {field: 'edit', headerName: '', width: 110, sortable: false, filterable: false, hideable: false,
             renderCell: (cellValues) => {
                 return (
                     <Button size="small" 
                             onClick = {() => 
                             {
-                                setEventType({id: cellValues.id, name: cellValues.row.name});
+                                setEventType({id: cellValues.id, name: cellValues.row.name, picture: cellValues.row.picture});
                                 handleOpenEditEventType(); 
                             }}>
                         <EditIcon color="primary"/>
@@ -301,7 +305,7 @@ const Admin = () => {
                 return (
                     <Button size="small" onClick = {() => 
                         {
-                            setEventType({id: cellValues.id, name: cellValues.name});
+                            setEventType({id: cellValues.id, name: cellValues.name, picture: cellValues.picture});
                             handleOpenDeleteEventType(); 
                         }}>
                         <DeleteIcon sx={{color: '#F15A59'}}/>
@@ -318,7 +322,7 @@ const Admin = () => {
                     <Grid item xs={12} sx={{display: 'flex', alignItems: 'center', py: 1, px: 1}}>
                         <GridToolbarFilterButton/>
                         <Box sx={{marginLeft: 'auto'}}>
-                            <Button variant="contained" onClick = {() => {handleOpenAddEventType(); setEventType({id: '', name: ''});}}>ADD</Button>
+                            <Button variant="contained" onClick = {() => {handleOpenAddEventType(); setEventType({id: '', name: '', picture: ''});}}>ADD</Button>
                         </Box>
                     </Grid>
                 </Grid>
@@ -508,7 +512,20 @@ const Admin = () => {
                         fullWidth
                         variant="outlined"
                         size="small"
-                    /> 
+                    />
+                    <DialogContentText pt={4}>
+                        Please add in the images folder the desired image. After that, enter the name of the picture with its extension.
+                        Example: "man.jpg"
+                    </DialogContentText>
+                    <TextField
+                        onChange={(event) => {setEventType({...eventType, id: "", picture: event.target.value})}}
+                        autoFocus
+                        type="text"
+                        margin="dense"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                    />
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
                     <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={AddEventType}>Save</Button>
@@ -531,7 +548,21 @@ const Admin = () => {
                         fullWidth
                         variant="outlined"
                         size="small"
-                    /> 
+                    />
+                    <DialogContentText pt={4}>
+                        Please add in the images folder the desired image. After that, enter the name of the picture with its extension.
+                        Example: "man.jpg"
+                    </DialogContentText>
+                    <TextField
+                        value={eventType.picture}
+                        onChange={(event) => {setEventType({...eventType, picture: event.target.value})}}
+                        autoFocus
+                        type="text"
+                        margin="dense"
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                    />
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
                     <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {EditEventType(eventType)}}>Save</Button>
