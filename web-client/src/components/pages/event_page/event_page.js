@@ -11,7 +11,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import NearMeIcon from "@mui/icons-material/NearMe";
 import { deepOrange } from "@mui/material/colors";
 import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
-import cooking from "../../images/cooking.png";
 import { getEventById, getEventTypeById, getUserProfileById, getParticipantsByEventId, getAverageRatingById, addEventParticipant } from "../../../api/index.js";
 import { format } from "date-fns";
 import "../event_page/event_page.css";
@@ -25,6 +24,7 @@ const EventPage = () => {
 
     const [eventInfo, setEventInfo] = useState({});
     const [eventTypeInfo, setEventTypeInfo] = useState({});
+    const [eventTypePicture, setEventTypePicture] = useState(null);
     const [userInfo, setUserInfo] = useState({});
     const [creatorID, setCreatorID] = useState('');
     const [ratingInfo, setRatingInfo] = useState({ value: 0 });
@@ -38,8 +38,11 @@ const EventPage = () => {
               getAverageRatingById(response.data.userProfileID)
             ]);
           })
-          .then(function ([eventTypeResponse, userProfileResponse, ratingResponse]) {
+          .then(async function ([eventTypeResponse, userProfileResponse, ratingResponse]) {
             setEventTypeInfo(eventTypeResponse.data);
+            const picture = await import("../../../images/" + eventTypeResponse.data.picture);
+            setEventTypePicture(picture.default);
+
             setUserInfo(userProfileResponse.data.basicInfo);
             setCreatorID(userProfileResponse.data.userProfileID);
             setRatingInfo(ratingResponse.data);
@@ -132,7 +135,7 @@ const EventPage = () => {
             <Grid container className="container-event-page">
                 <Paper elevation={0} className="paper">
                     <Grid item className="grid-image">
-                        <img src={cooking} alt=""/>
+                        <img src={eventTypePicture} alt=""/>
                         <Box className="box">
                             <Typography pl={2} py={1} className="placeholder">{eventTypeInfo.name}</Typography>
                         </Box>

@@ -14,7 +14,7 @@ import NearMeIcon from '@mui/icons-material/NearMe';
 import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
 import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api";
 import { useParams, useNavigate } from "react-router-dom";
-import { getEventById, getEventTypeById, getUserProfileById, updateEvent, getParticipantsByEventId } from '../../../api/index.js';
+import { getEventById, getEventTypeById, updateEvent, getParticipantsByEventId } from '../../../api/index.js';
 import { format } from "date-fns";
 import cooking from '../../images/cooking.png';
 import '../edit_event/edit_event.css';
@@ -58,6 +58,7 @@ const CreateEvent = () => {
 
     const [eventInfo, setEventInfo] = useState({});
     const [eventTypeInfo, setEventTypeInfo] = useState({});
+    const [eventTypePicture, setEventTypePicture] = useState(null);
     useEffect(() => {
         getEventById(param.eventID)
             .then(function (response) {
@@ -72,8 +73,10 @@ const CreateEvent = () => {
                     mapsLng: response.data.locationLng
                 });
                 return getEventTypeById(response.data.eventTypeID)
-                    .then(function (eventTypeResponse) {
+                    .then(async function (eventTypeResponse) {
                         setEventTypeInfo(eventTypeResponse.data);
+                        const picture = await import("../../../images/" + eventTypeResponse.data.picture);
+                        setEventTypePicture(picture.default);
                     });
             })
             .catch(function (error) {
@@ -152,7 +155,7 @@ const CreateEvent = () => {
             <Grid container className="container-edit-event">
                 <Paper elevation={0} className="paper">
                     <Grid item className="grid-image">
-                        <img src={cooking} alt=""/>
+                        <img src={eventTypePicture} alt=""/>
                         <Box className="box">
                             <Typography pl={2} py={1} className="placeholder"><i>{eventTypeInfo.name}</i></Typography>
                         </Box>
