@@ -16,7 +16,6 @@ import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEventById, getEventTypeById, updateEvent, getParticipantsByEventId } from '../../../api/index.js';
 import { format } from "date-fns";
-import cooking from '../../images/cooking.png';
 import '../edit_event/edit_event.css';
 
 const initialState = {eventName: "", eventType: "", startDateTime: "", endDateTime: "", nrParticipants: 0, description: "", mapsLat: "", mapsLng: ""};
@@ -125,6 +124,7 @@ const CreateEvent = () => {
                 locationLng: formData.mapsLng
             }).then(function (response) {
                 console.log(response.status);
+                navigate("/profile");
             }).catch(function (error) {
                 console.log(error);
         })

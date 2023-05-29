@@ -16,7 +16,7 @@ import { Autocomplete as GoogleAutocomplete } from "@react-google-maps/api";
 import { getAllEventTypes, addEvent } from "../../../api/index.js";
 import { useNavigate } from "react-router-dom";
 import { format } from 'date-fns';
-import cooking from "../../images/cooking.png";
+import cooking from "../../../images/cooking.png";
 import "../create_event/create_event.css";
 
 const initialState = {eventName: "", eventType: "", startDate: "", startTime: "", endDate: "", endTime: "", nrParticipants: "", description: "", mapsLat: "", mapsLng: ""};

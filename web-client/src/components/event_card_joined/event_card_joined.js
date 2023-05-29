@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import jwt_decode from "jwt-decode";
 import "../event_card_joined/event_card_joined.css";
-import cooking from "../images/cooking.png";
 
 const EventCardJoined = ({ joinedEvent }) => {
     const navigate = useNavigate();
