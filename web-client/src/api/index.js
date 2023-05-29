@@ -42,6 +42,7 @@ export const deleteEventType = (id) => apiWithToken().delete(`api/v1/EventTypes/
 
 //Events
 export const getAllEvents = () => apiWithToken().get("api/v1/Events");
+export const getAvailableEvents = () => apiWithToken().get("api/v1/Events/Available");
 export const getEventById = (id) => apiWithToken().get(`api/v1/Events/${id}`);
 export const getEventsByUserId = (id) => apiWithToken().get(`api/v1/Events/User/${id}`);
 export const addEvent = (formData) => apiWithToken().post("api/v1/Events", formData);

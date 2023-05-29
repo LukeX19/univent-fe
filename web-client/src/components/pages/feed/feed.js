@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune';
 import EventCard from '../../event_card/event_card.js';
-import { getAllEventTypes, getAllEvents } from "../../../api/index.js";
+import { getAllEventTypes, getAvailableEvents } from "../../../api/index.js";
 import "../feed/feed.css";
 
 const Search = styled('div')(({ theme }) => ({
@@ -57,7 +57,7 @@ const Feed = () => {
 
     const [events, setEvents] = useState([]);
     useEffect(() => {
-        getAllEvents().then(function (response) {
+        getAvailableEvents().then(function (response) {
             setEvents(response.data);
         })
         .catch(function (error) {
@@ -124,7 +124,7 @@ const Feed = () => {
                 {    
                     showFilteredResults ?
                     filtered.filter((value) => {
-                        if(searchEvent == "")
+                        if(searchEvent === "")
                         {
                             return value;
                         }
@@ -139,7 +139,7 @@ const Feed = () => {
                         </Grid>
                     ))
                     : events.filter((value) => {
-                        if(searchEvent == "")
+                        if(searchEvent === "")
                         {
                             return value;
                         }
