@@ -38,7 +38,7 @@
 }
 
 .dialog-event-page .participant-container{
-    justify-content: center;
+    padding-left: 70px;
     align-items: center;
     background-color: white;
 }

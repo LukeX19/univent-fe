@@ -180,7 +180,7 @@ const Feed = () => {
                             <>
                                 {results > 0 ? 
                                     (
-                                        <Button onClick={() => {handleClose()}} variant="contained">
+                                        <Button sx={{ background: "#F1DD7C", color: "black", ":hover" : {background: '#F1DD7C', color: 'black'}}} onClick={() => {handleClose()}} variant="contained">
                                             {results > 1 ? `SEE ${results} RESULTS` : `SEE ${results} RESULT`}
                                         </Button>
                                     )
@@ -189,7 +189,7 @@ const Feed = () => {
                                 }
                                 {results === 0 && 
                                     (
-                                        <Button onClick={() => {handleClose()}} variant="contained">
+                                        <Button sx={{ background: "#F1DD7C", color: "black", ":hover" : {background: '#F1DD7C', color: 'black'} }} onClick={() => {handleClose()}} variant="contained" className="custom-button">
                                             SEE ALL EVENTS
                                         </Button>
                                     )

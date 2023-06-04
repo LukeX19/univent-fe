@@ -83,7 +83,7 @@ const EventCardJoined = ({ joinedEvent }) => {
 
     return(
         <>
-        <Grid container pt={3} className="container-card-joined">
+        <Grid container pt={2} pb={2} className="container-card-joined">
             <Grid item xs={12} md={4} className="grid-image">
                 <img src={eventTypePicture} width="100%" height="100%"/>
                 <Box className="box">
@@ -123,18 +123,18 @@ const EventCardJoined = ({ joinedEvent }) => {
                     </Grid>
                     {feedbackAvailable && (new Date(joinedEvent.endTime) < new Date()) &&
                         <Grid item xs={12} pt={1} textAlign="center" sx={{fontStyle: "italic", color: "orange"}}>
-                            <span style={{cursor: "pointer"}} onClick={() => {navigate(`/event/${joinedEvent.eventID}/feedback`)}}>Enjoyed this event? Rate other participants here!</span>
+                            <span style={{cursor: "pointer"}} onClick={() => {navigate(`/event/${joinedEvent.eventID}/ratings`)}}>Enjoyed this event? Rate other participants here!</span>
                         </Grid>
                     }
                 </Grid>
             </Grid>
             <Grid item xs={12} md={2}>
                 <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${joinedEvent.eventID}`)}}>
-                    <Button variant="contained" sx={{width: '150px'}}>VIEW</Button>
+                    <Button variant="contained" sx={{width: '150px', background: "#F1DD7C", color: "black", ":hover" : {background: '#F1DD7C', color: 'black'}}}>VIEW</Button>
                 </Grid>
                 { !joinedEvent.isCancelled && new Date(joinedEvent.endTime) > new Date() && (
                     <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={handleLeaveEventAlertOpen}>
-                        <Button variant="contained" sx={{width: '150px'}}>LEAVE</Button>
+                        <Button variant="contained" sx={{width: '150px', background: "red", ":hover" : {background: 'red'}}}>LEAVE</Button>
                     </Grid>
                 )}
             </Grid>
@@ -147,7 +147,7 @@ const EventCardJoined = ({ joinedEvent }) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions sx={{padding: "15px"}}>
-                <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {leaveEvent(joinedEvent.eventID); handleLeaveEventAlertClose()}}>Confirm</Button>
+                <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "red"}}} onClick={() => {leaveEvent(joinedEvent.eventID); handleLeaveEventAlertClose()}}>Confirm</Button>
                 <Button onClick={handleLeaveEventAlertClose}>Cancel</Button>
             </DialogActions>
         </Dialog>

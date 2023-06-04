@@ -63,7 +63,7 @@ function ResponsiveAppBar() {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
-                        sx={{flexGrow: 1, display: { xs: 'none', md: 'flex' }, fontWeight: 700, fontSize: '25px', cursor: 'pointer'}}
+                        sx={{flexGrow: 1, fontFamily: "'Permanent Marker', cursive", display: { xs: 'none', md: 'flex' }, fontWeight: 700, fontSize: '30px', cursor: 'pointer'}}
                         onClick={()=>{navigate("/")}}>
                         Univent
                     </Typography>

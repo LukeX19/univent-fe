@@ -1,0 +1,57 @@
+.container-home-page{
+    width: 100%;
+    height: 100vh;
+}
+
+.container-home-page .first-grid{
+    display: flex;
+    align-items: center;
+    background: rgb(229,223,225);
+    background: linear-gradient(278deg, rgba(229,223,225,1) 40%, rgba(255,255,255,1) 100%);
+}
+
+.container-home-page .title{
+    font-weight: 900;
+    font-size: 50px;
+    font-family: 'Urbanist', sans-serif;
+    padding-bottom: 15px; 
+}
+
+.container-home-page .community-style{
+    text-decoration-line: underline;
+    text-decoration-style: double;
+}
+
+.container-home-page .description{
+    font-size: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container-home-page .grid-icon{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.container-home-page .second-grid{
+    background-image: url("./landingPage.jpg");
+    height: 100vh;
+    width: 100%;
+    object-fit: cover;
+    background-repeat: no-repeat; 
+}
+
+.container-home-page .button{
+    height: 55px;
+    width: 250px;
+    background: #F1DD7C;
+    color: black;
+    font-size: 18px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+.container-home-page .button:hover{
+    background: #F1DD7C;
+    color: black;
+}

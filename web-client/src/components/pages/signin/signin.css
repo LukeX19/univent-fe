@@ -36,6 +36,11 @@
     align-items: center;
 }
 
+.container-signin .button-container button{
+    background: #F1DD7C;
+    color: black;
+}
+
 .container-signin .icon{
     font-size: 1.4rem;
     margin-right: 10px;

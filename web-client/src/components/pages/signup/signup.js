@@ -1,5 +1,5 @@
 import { React, useState } from 'react';
-import { Grid, Typography, Stepper, Step, StepLabel } from '@mui/material';
+import { Grid, Typography, Stepper, Step, StepLabel, Paper } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
@@ -47,40 +47,39 @@ const Signup = () => {
 
     return(
         <Grid container className="container-signup">
-            <Grid item xs={12} md={6} className="first-item">
-
-            </Grid>
-            <Grid item xs={12} md={6} className="second-item">
-                <Grid container className="form">
-                    <Grid item xs={12} className="title">
-                        <Typography fontSize="25px">Sign Up</Typography>
-                    </Grid>
-                    <Grid item xs={12} py={4}>
-                        <Stepper activeStep={step} alternativeLabel>
-                            {steps.map((label, index) => (
-                                <Step key={index}
-                                    sx={{
-                                        '& .MuiStepLabel-root .Mui-completed': {
-                                            color: '#18BF89', 
-                                        },
-                                        '& .MuiStepLabel-root .Mui-active': {
-                                            color: '#FDD365', 
-                                        },
-                                        '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
-                                            fill: '#191919', 
-                                        },
-                                    }}
-                                >
-                                    <StepLabel>{label}</StepLabel>
-                                </Step>
-                            ))}
-                        </Stepper>
-                    </Grid>
-                    <Grid item xs={12}>
-                        {handleForm()}
+            <Paper elevation={20}>
+                <Grid item xs={12} px={10} className="custom-grid">
+                    <Grid container className="form">
+                        <Grid item xs={12} className="title">
+                            <Typography fontSize="25px">Sign Up</Typography>
+                        </Grid>
+                        <Grid item xs={12} py={4}>
+                            <Stepper activeStep={step} alternativeLabel>
+                                {steps.map((label, index) => (
+                                    <Step key={index}
+                                        sx={{
+                                            '& .MuiStepLabel-root .Mui-completed': {
+                                                color: '#18BF89', 
+                                            },
+                                            '& .MuiStepLabel-root .Mui-active': {
+                                                color: '#FDD365', 
+                                            },
+                                            '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
+                                                fill: '#191919', 
+                                            },
+                                        }}
+                                    >
+                                        <StepLabel>{label}</StepLabel>
+                                    </Step>
+                                ))}
+                            </Stepper>
+                        </Grid>
+                        <Grid item xs={12}>
+                            {handleForm()}
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
+            </Paper>
         </Grid>
     )
 }

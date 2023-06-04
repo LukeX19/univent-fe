@@ -58,11 +58,11 @@ const StepOne = ({formData, setFormData, handleChange, handleNext}) => {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container>
-                <Grid item xs={12} py={1}>
+                <Grid item xs={12} sm={6} py={1} pr={1}>
                     <TextField {...register("firstname")} required value={formData.firstname} onChange={handleChange} type="text" label="First Name" variant="outlined" fullWidth/>
                     <Typography className="error">{errors.firstname?.message}</Typography>
                 </Grid>
-                <Grid item xs={12} py={1}>
+                <Grid item xs={12} sm={6} py={1}>
                     <TextField {...register("lastname")} required value={formData.lastname} onChange={handleChange} type="text" label="Last Name" variant="outlined" fullWidth/>
                     <Typography className="error">{errors.lastname?.message}</Typography>
                 </Grid>

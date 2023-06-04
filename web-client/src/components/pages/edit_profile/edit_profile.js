@@ -167,11 +167,11 @@ const EditProfile = () => {
                             </Grid>
                             <Grid item md={6}>
                                 <Grid container>
-                                    <Grid item xs={12} py={1}>
+                                    <Grid item xs={12} md={6} pr={1} py={1}>
                                         <TextField {...register("firstname")} required value={formData.firstname} onChange={handleChange} name="firstname" type="text" label="First Name" variant="outlined" fullWidth/>
                                         <Typography className="error">{errors.firstname?.message}</Typography>
                                     </Grid>
-                                    <Grid item xs={12} py={1}>
+                                    <Grid item xs={12} md={6} py={1}>
                                         <TextField {...register("lastname")} required value={formData.lastname} onChange={handleChange} name="lastname" type="text" label="Last Name" variant="outlined" fullWidth/>
                                         <Typography className="error">{errors.lastname?.message}</Typography>
                                     </Grid>
@@ -245,7 +245,7 @@ const EditProfile = () => {
                             </Grid>
                             <Grid item xs={12} py={1}>
                                 <Box display="flex" justifyContent="flex-end">
-                                    <Button type="submit" variant="contained">SAVE CHANGES</Button>
+                                    <Button type="submit" variant="contained" sx={{background: "#68B984", ":hover" : {background: '#68B984'}}}>SAVE CHANGES</Button>
                                 </Box>
                             </Grid>
                         </Grid>
@@ -261,7 +261,7 @@ const EditProfile = () => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions sx={{padding: "15px"}}>
-                <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={sendRequest}>Confirm</Button>
+                <Button sx={{background: "#68B984", color: "#FBFBFB", ":hover" : {background: '#68B984'}}} onClick={sendRequest}>Confirm</Button>
                 <Button onClick={handleConfirmAlertClose}>Cancel</Button>
             </DialogActions>
         </Dialog>
