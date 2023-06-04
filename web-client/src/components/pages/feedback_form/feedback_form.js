@@ -151,7 +151,7 @@ const FeedbackForm = () => {
                 </div>
                 <Grid item xs={12} py={1}>
                     <Box display="flex" justifyContent="flex-end">
-                        <Button variant="contained" onClick={() => {sendRatings()}}>SEND</Button>
+                        <Button variant="contained" sx={{background: "#68B984", ":hover" : {background: '#68B984'}}} onClick={() => {sendRatings()}}>SEND</Button>
                     </Box>
                 </Grid>
             </Paper>

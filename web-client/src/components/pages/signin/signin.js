@@ -96,12 +96,10 @@ const Signin = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12}>
-                            <Typography className="forgot-password-link">Forgot password</Typography>
-                        </Grid>
-                        <Grid item xs={12} py={1} className="signup-section">
+                        <Grid item xs={12} pb={1} className="signup-section">
                             <Typography>New to our platform? Create an account</Typography>
                             <Typography className="signup-link" onClick={() => {navigate("/register")}}>here</Typography>
+                            <Typography>.</Typography>
                         </Grid>
                         {errorMessage &&
                             <Grid item xs={12} pt={1} pb={2}>
@@ -116,17 +114,6 @@ const Signin = () => {
                         <Grid item xs={12} py={2} className="button-container"> 
                             <Button variant="contained" type="submit" className="signin-button">LOGIN</Button>
                         </Grid>
-                        {/*
-                        <Grid item xs={12} textAlign="center"> 
-                            <Typography>- OR -</Typography>
-                        </Grid>
-                        <Grid item xs={12} py={1} className="button-container"> 
-                            <Button variant="contained" className="google-button"><GoogleIcon className="icon"/>Sign in with Google</Button>
-                        </Grid>
-                        <Grid item xs={12} py={1} className="button-container"> 
-                            <Button variant="contained" className="facebook-button"><FacebookIcon className="icon"/>Sign in with Facebook</Button>
-                        </Grid>
-                        */}
                     </Grid>
                 </Paper>
             </Grid>

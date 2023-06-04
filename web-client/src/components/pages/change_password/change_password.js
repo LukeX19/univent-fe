@@ -154,7 +154,7 @@ const ChangePassword = () => {
                         }
                         <Grid item xs={12} py={1}>
                             <Box display="flex" justifyContent="flex-end">
-                                <Button type="submit" variant="contained">SAVE CHANGES</Button>
+                                <Button type="submit" variant="contained" sx={{background: "#68B984", ":hover" : {background: '#68B984'}}}>SAVE CHANGES</Button>
                             </Box>
                         </Grid>
                     </Grid> 
@@ -171,7 +171,7 @@ const ChangePassword = () => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions sx={{padding: "15px"}}>
-                <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={sendRequest}>Confirm</Button>
+                <Button sx={{background: "#68B984", color: "#FBFBFB" ,":hover" : {background: '#68B984'}}} onClick={sendRequest}>Confirm</Button>
                 <Button onClick={handleConfirmAlertClose}>Cancel</Button>
             </DialogActions>
         </Dialog>

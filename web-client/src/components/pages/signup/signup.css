@@ -1,16 +1,16 @@
 .container-signup{
     width: 100%;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.container-signup .first-item{
-    background: rgb(192, 183, 191);
-}
-
-.container-signup .second-item{
+.container-signup .custom-grid{
    display: flex;
    justify-content: center;
    align-items: center;
+   min-height: 100vh;
 }
 
 .container-signup .form{
@@ -56,7 +56,17 @@
     padding: 8px 25px 8px 25px;
 }
 
+.container-signup .next-button:hover{
+    background: #21b2c3;
+    padding: 8px 25px 8px 25px;
+}
+
 .container-signup .prev-button{
+    background: #AA8DD3;
+    padding: 8px 25px 8px 25px;
+}
+
+.container-signup .prev-button:hover{
     background: #AA8DD3;
     padding: 8px 25px 8px 25px;
 }

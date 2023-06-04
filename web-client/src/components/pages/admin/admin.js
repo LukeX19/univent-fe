@@ -455,7 +455,7 @@ const Admin = () => {
                     /> 
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
-                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={AddUniversity}>Save</Button>
+                    <Button sx={{background: "#68B984", color: "#FBFBFB", "&:hover": {background: "#68B984"}}} onClick={AddUniversity}>Save</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>
@@ -478,7 +478,7 @@ const Admin = () => {
                     /> 
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
-                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {EditUniversity(university)}}>Save</Button>
+                    <Button sx={{background: "#68B984", color: "#FBFBFB", "&:hover": {background: "#68B984"}}} onClick={() => {EditUniversity(university)}}>Save</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>
@@ -493,7 +493,7 @@ const Admin = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
-                    <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {DeleteUniversity(university)}}>CONFIRM</Button>
+                    <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "red"}}} onClick={() => {DeleteUniversity(university)}}>CONFIRM</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>
@@ -528,7 +528,7 @@ const Admin = () => {
                     />
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
-                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={AddEventType}>Save</Button>
+                    <Button sx={{background: "#68B984", color: "#FBFBFB", "&:hover": {background: "#68B984"}}} onClick={AddEventType}>Save</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>
@@ -565,7 +565,7 @@ const Admin = () => {
                     />
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
-                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {EditEventType(eventType)}}>Save</Button>
+                    <Button sx={{background: "#68B984", color: "#FBFBFB", "&:hover": {background: "#68B984"}}} onClick={() => {EditEventType(eventType)}}>Save</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>
@@ -580,7 +580,7 @@ const Admin = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
-                    <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {DeleteEventType(eventType)}}>Confirm</Button>
+                    <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "red"}}} onClick={() => {DeleteEventType(eventType)}}>Confirm</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>
@@ -593,7 +593,7 @@ const Admin = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
-                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {ApproveUser(user.id)}}>Confirm</Button>
+                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "red"}}} onClick={() => {ApproveUser(user.id)}}>Confirm</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>

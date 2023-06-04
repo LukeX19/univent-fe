@@ -213,11 +213,11 @@ const EventPage = () => {
                     </Grid>
                     <Grid item xs={12}>
                         <Box display="flex" justifyContent="flex-end">
-                            <Button variant="contained" onClick={handleOpen} sx={{mr: 2, background: "#8FBDD3"}}>CHECK ENROLLED PARTICIPANTS</Button>
+                            <Button variant="contained" onClick={handleOpen} sx={{mr: 2, background: "#F1DD7C", color: "black", ":hover" : {background: '#F1DD7C', color: 'black'}}}>CHECK ENROLLED PARTICIPANTS</Button>
                             { (participantsNumber < eventInfo.maximumParticipants) &&
                               !(creatorID === decoded_token.UserProfileId) &&
                               !participantsList.some(participant => participant.userProfileID === decoded_token.UserProfileId) &&
-                                <Button variant="contained" onClick={enrollInEvent}>JOIN EVENT</Button>
+                                <Button variant="contained" sx={{background: "#68B984", ":hover" : {background: '#68B984'}}} onClick={enrollInEvent}>JOIN EVENT</Button>
                             }
                         </Box>
                     </Grid>

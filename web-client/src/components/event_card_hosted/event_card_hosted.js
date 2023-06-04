@@ -59,7 +59,7 @@ const EventCardHosted = ({ hostedEvent }) => {
 
     return(
         <>
-        <Grid container pt={3} className="container-card-hosted">
+        <Grid container pt={2} pb={2} className="container-card-hosted">
             <Grid item xs={12} md={4} className="grid-image">
                 <img src={eventTypePicture} width="100%" height="100%"/>
                 <Box className="box">
@@ -101,15 +101,15 @@ const EventCardHosted = ({ hostedEvent }) => {
             </Grid>
             <Grid item xs={12} md={2}>
                 <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}`)}}>
-                    <Button variant="contained" sx={{width: '150px'}}>VIEW</Button>
+                    <Button variant="contained" sx={{width: '150px', background: "#F1DD7C", color: "black", ":hover" : {background: '#F1DD7C', color: 'black'}}}>VIEW</Button>
                 </Grid>
                 { !hostedEvent.isCancelled && new Date(hostedEvent.endTime) > new Date() && (
                     <>
                     <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={() => {navigate(`/event/${hostedEvent.eventID}/edit`)}}>
-                        <Button variant="contained" sx={{width: '150px'}}>EDIT</Button>
+                        <Button variant="contained" sx={{width: '150px', background: "#01676B", ":hover" : {background: '#01676B'}}}>EDIT</Button>
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} px={{xs: 5, sm: 3, md: 2}} py={{xs: 2, sm: 4, md: 1}} className="grid-button" onClick={handleCancelEventAlertOpen}>
-                        <Button variant="contained" sx={{width: '150px'}}>CANCEL</Button>
+                        <Button variant="contained" sx={{width: '150px', background: "red", ":hover" : {background: 'red'}}}>CANCEL</Button>
                     </Grid>
                     </>
                 )}
@@ -125,7 +125,7 @@ const EventCardHosted = ({ hostedEvent }) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions sx={{padding: "15px"}}>
-                <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {cancelCurrentEvent(hostedEvent.eventID); handleCancelEventAlertClose()}}>Confirm</Button>
+                <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "red"}}} onClick={() => {cancelCurrentEvent(hostedEvent.eventID); handleCancelEventAlertClose()}}>Confirm</Button>
                 <Button onClick={handleCancelEventAlertClose}>Cancel</Button>
             </DialogActions>
         </Dialog>

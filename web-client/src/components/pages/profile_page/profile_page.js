@@ -190,7 +190,7 @@ const ProfilePage = () => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions sx={{padding: "15px"}}>
-                <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "#FFB84C"}}} onClick={() => {deleteAccount()}}>Delete</Button>
+                <Button sx={{background: "red", color: "#FBFBFB", "&:hover": {background: "red"}}} onClick={() => {deleteAccount()}}>Delete</Button>
                 <Button onClick={handleDeleteAlertClose}>Cancel</Button>
             </DialogActions>
         </Dialog>

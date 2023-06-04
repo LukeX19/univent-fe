@@ -373,7 +373,7 @@ const CreateEvent = () => {
                     </Timeline>
                     <Grid item pr={5}>
                         <Box display="flex" justifyContent="flex-end">
-                            <Button type="submit" variant="contained">CREATE EVENT</Button>
+                            <Button sx={{ background: "#68B984", ":hover" : {background: '#68B984'} }} type="submit" variant="contained">CREATE EVENT</Button>
                         </Box>
                     </Grid>
                 </Paper>
