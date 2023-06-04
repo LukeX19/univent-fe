@@ -21,8 +21,7 @@ function NavbarAdmin() {
              <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
-                        sx={{flexGrow: 1, fontFamily: "'Permanent Marker', cursive", display: 'flex', fontWeight: 700, fontSize: '30px', cursor: 'pointer'}}
-                        onClick={()=>{navigate("/")}}>
+                        sx={{flexGrow: 1, fontFamily: "'Permanent Marker', cursive", display: 'flex', fontWeight: 700, fontSize: '30px'}}>
                         Univent
                     </Typography>
 
