@@ -593,7 +593,7 @@ const Admin = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{padding: "15px"}}>
-                    <Button sx={{background: "green", color: "#FBFBFB", "&:hover": {background: "red"}}} onClick={() => {ApproveUser(user.id)}}>Confirm</Button>
+                    <Button sx={{background: "#68B984", color: "#FBFBFB", "&:hover": {background: "#68B984"}}} onClick={() => {ApproveUser(user.id)}}>Confirm</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>
